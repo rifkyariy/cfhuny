@@ -1,0 +1,26 @@
+.select2-container .select2-selection--single {
+    font-size: .875rem;
+    height: calc(1.5em + 1.25rem + 5px) !important;
+    transition: all .15s ease-in-out;
+}
+
+.select2-selection__arrow {
+    display: block;
+    padding: 3%;
+}
+
+.hidden {
+    display: none;
+}
+
+.btn-form {
+    height: calc(1.5em + 1.25rem + 5px) !important;
+}
+
+.ktmform a {
+    color: white;
+}
+
+.ktmform a:hover {
+    color: white;
+}
