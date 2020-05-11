@@ -50,7 +50,8 @@ class AuthController extends Controller
                 'email'    => !empty($user->email)? $user->email : '' ,
                 'provider' => $provider,
                 'provider_id' => $user->id,
-                'avatar' => $user->avatar
+                'avatar' => $user->avatar,
+                'is_active' => '1'
             ]); 
             return $data;
         }

@@ -1,23 +1,6 @@
-<!DOCTYPE html>
-<html>
+@extends('layouts.app')
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Website Internal Gemastik - User Dashboard</title>
-  <!-- Favicon -->
-  <link rel="icon" href="{{ asset('landing/images/favicon.svg') }}" type="image/png">
-  <!-- Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
-  <!-- Icons -->
-  <link rel="stylesheet" href="{{asset('vendor/nucleo/css/nucleo.css')}}" type="text/css">
-  <link rel="stylesheet" href="{{asset('vendor/@fortawesome/fontawesome-free/css/all.min.css')}}" type="text/css">
-  <!-- Page plugins -->
-  <!-- Argon CSS -->
-  <link rel="stylesheet" href="{{asset('css/argon.css?v=1.2.0')}}" type="text/css">
-</head>
-
-<body>
+@section('content')
   <!-- Sidenav -->
   <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
     <div class="scrollbar-inner">
@@ -160,7 +143,7 @@
         </div>
     @endif
      <div class="row">
-     <div class="col-xl-4 order-xl-2">
+     <div class="col-xl-3 order-xl-2">
             <div class="card card-profile">
             <img src="{{ asset('img/theme/img-1-1000x600.jpg') }}" alt="Image placeholder" class="card-img-top">
             <div class="row justify-content-center">
@@ -191,13 +174,14 @@
                   <i class="ni business_briefcase-24 mr-2"></i>{{ Auth::user()->prodi ? Auth::user()->prodi : "Belum ada Program Studi" }}
                 </div>
                 <div>
-                  <i class="ni education_hat mr-2"></i>Universitas Negeri Yogyakarta
+                  <i class="ni education_hat mr-2"></i>
+                  {{ $pt->name ?? 'Profil Belum Dilengkapi' }}
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-xl-8 order-xl-1">
+        <div class="col-xl-9 order-xl-1">
           <div class="card">
             <div class="card-header">
               <div class="row align-items-center">
@@ -212,7 +196,7 @@
                 <h6 class="heading-small text-muted mb-4">Informasi tim</h6>
                 <div class="pl-lg-4">
                   <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-username">Nama Tim</label>
                         <input type="text" name="name" id="input-username" class="form-control {{ $errors->first('name') ? 'is-invalid' : ''}}" placeholder="Nama Tim" required>
@@ -221,19 +205,12 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-email">Cabang Lomba</label> <br>
-                        <select class="form-control {{ $errors->first('cabang_lomba') ? 'is-invalid' : ''}}" name="cabang_lomba" required>
-                            <option value="">- Pilih -</option>
-                            <option value="Penambangan Data">Penambangan Data</option>
-                            <option value="Pengembangan Bisnis TIK">Pengembangan Bisnis TIK</option>
-                            <option value="Animasi">Animasi</option>
-                            <option value="Kota Cerdas">Kota Cerdas</option>
-                            <option value="Piranti Cerdas, Sistem Benam dan IOT">Piranti Cerdas, Sistem Benam dan IOT</option>
-                            <option value="Pengembangan Aplikasi Permainan">Pengembangan Aplikasi Permainan</option>
-                            <option value="Desain Pengalaman Pengguna">Desain Pengalaman Pengguna</option>
-                            <option value="Pengembangan Perangkat Lunak">Pengembangan Perangkat Lunak</option>
+                        <input id="cabang_lomba" name="cabang_lomba" type="hidden">
+                        <select  id="input-cabang-lomba" class="form-control {{ $errors->first('cabang_lomba') ? 'is-invalid' : ''}}" name="" required>
+                           
                         </select>
                         <div class="invalid-feedback">
                             {{ $errors->first('cabang_lomba') }}
@@ -245,61 +222,26 @@
                 <hr class="my-4" />
                 <!-- Address -->
                 <h6 class="heading-small text-muted mb-4">Anggota tim</h6>
-                <div class="pl-lg-4">
+                <div class="pl-lg-4 anggotatim">
                   <div class="row">
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label {{ $errors->first('anggota1') ? 'is-invalid' : ''}}" for="input-address">Anggota 1</label> <br>
-                        <select class="form-control" name="anggota1" required>
-                            <option value="">- Pilih Anggota -</option>
-                            @foreach($users as $user)
-                                @if($user->role == "Mahasiswa")
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback">
-                            {{ $errors->first('anggota1') }}
-                        </div>
+                    <div class="col-lg-12">
+                      <div class="anggota-con">
                       </div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-address">Anggota 2</label> <br>
-                        <select  class="form-control {{ $errors->first('anggota2') ? 'is-invalid' : ''}}" name="anggota2">
-                            <option value="">- Pilih Anggota -</option>
-                            @foreach($users as $user)
-                                @if($user->role == "Mahasiswa")
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback">
-                            {{ $errors->first('anggota2') }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label {{ $errors->first('dosbing') ? 'is-invalid' : ''}}" for="input-username">Dosen Pembimbing</label> <br>
-                        <select  class="form-control" name="dosbing" required>
-                            <option value="">- Pilih Anggota -</option>
-                            @foreach($users as $user)
-                                @if($user->role == "Dosen")
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback">
-                            {{ $errors->first('dosbing') }}
-                        </div>
-                      </div>
+                      <a class="btn-cl-white btn btn-form btn-success" id="tambahAnggota" onclick="tambahAnggota()">Tambah Anggota</a><br><br>
                     </div>
                   </div>           
                 </div>
+                
+                <label class="checkbox-label">
+                  <input type="checkbox" id="acceptRequirement">
+                  <span class="checkbox-custom rectangular"></span>
+                </label>
+                <label class="cblabel" for="acceptRequirement">Saya telah membaca segala persyaratan yang ada di dalam <a href="{{url('/panduan')}}">Panduan</a> dan menyetujuinya</label>
+                
+                <input id="jumlah_anggota" name="jumlah_anggota" type="hidden">
+                <hr class="my-4" />
                 <div class="pl-lg-4">
-                    <br>
-                    <button type="submit" class="btn btn-primary">Buat Tim</button>
+                    <button type="submit" id="buatTim" class="btn btn-primary" disabled="true">Buat Tim</button>
                 </div>
               </form>
             </div>
@@ -318,18 +260,207 @@
       </footer>
     </div>
   </div>
-  <!-- Argon Scripts -->
-  <!-- Core -->
+@endsection
+
+@section('localjs')
+  <script>
+    $(document).ready(function() {
+      // initiate select2
+      $('#input-cabang-lomba').select2({
+        ajax: {
+          url: '{{url("/api/sel2/cabanglomba")}}',
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            var query = {
+              search: params.term
+            }
+
+            // Query parameters will be ?search=[term]&page=[page]
+            return query;
+          },
+          processResults: function (data) {
+            return {
+              results: $.map(data, function(obj) {
+                return {
+                  id: obj.id,
+                  text: obj.text
+                };
+              })
+            };
+          },
+          cache: true
+        },
+        placeholder: 'Pilih Cabang Lomba'
+      });
+    });
+
+    // select2 onchange trigger
+    $('#input-cabang-lomba').on('change',() => {
+      let id = $('#input-cabang-lomba :selected').val();
+      $('#cabang_lomba').val(id) ;
+    })
+
+    let anggota = 0;
+    let tambahAnggota = () => {
+      if (anggota<=2) {
+        $('.anggota-con').append(` 
+        <div class="form-group fg-anggota" id="anggota${anggota+1}">
+          <label class="anggota-title form-control-label {{ $errors->first('anggota${[anggota]}') ? 'is-invalid' : ''}}" for="input-address">Anggota  ${anggota+1}</label> 
+          <a ><span onclick="removeMember(${anggota+1})" class=" ml-2 badge badge-pill badge-danger my-1">Hapus Anggota</span></a>
+          <br>
+          <h6 class="heading-small text-muted mb-4">Informasi Anggota</h6>
+          <div class="pl-lg-4">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label class="form-control-label" for="input-username">Nama Lengkap</label>
+                  <input type="text" name="anggota_name[]" id="input-username" class="form-control {{ $errors->first('anggota_name${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Nama Lengkap"  required>
+                  <div class="invalid-feedback">
+                      {{ $errors->first('name') }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label class="form-control-label" for="input-email">Alamat Email</label>
+                  <input type="email" name="anggota_email[]" id="input-email" placeholder="Alamat Email" class="form-control {{ $errors->first('anggota_email${[anggota]}') ? 'is-invalid' : ''}}"  >
+                  </div>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-university">Universitas</label>
+                    <input id="input-university-id" name="anggota_university_id[]" type="hidden" value="{{ Auth::user()->university_id }}">
+                    <select class="form-control input-university" id="input-university">
+                      @if ($pt!=null)
+                        <option value="{{$pt->id}}">{{$pt->name}}</option>
+                      @endif
+                    </select>
+                    <div class="invalid-feedback">
+                      {{ $errors->first('anggota_university_id${[anggota]}') }}
+                    </div>
+                  </div>
+              </div>
+              <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-address">Program Studi</label>
+                    <input id="input-address" name="anggota_prodi[]" class="form-control {{ $errors->first('anggota_prodi${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Program Studi" type="text" value="" required>
+                    <div class="invalid-feedback">
+                        {{ $errors->first('anggota_prodi${[anggota]}') }}
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-address">NIM</label>
+                    <input id="input-address" name="anggota_nim[]" class="form-control {{ $errors->first('anggota_nim${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Nomor Induk Mahasiswa" type="text" value="" required>
+                    <div class="invalid-feedback">
+                      {{ $errors->first('anggota_nim${[anggota]}') }}
+                    </div>
+                  </div>
+              </div>
+              <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-username">No Hp</label>
+                    <input type="text" name="anggota_phone[]" id="input-username" class="form-control {{ $errors->first('anggota_phone${[anggota]}') ? 'is-invalid' : ''}}" value="" placeholder="No Hp" required>
+                    <div class="invalid-feedback">
+                        {{ $errors->first('anggota_phone${[anggota]}') }}
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <hr class="my-4" />
+          <!-- Address -->
+          <h6 class="heading-small text-muted mb-4">Upload Berkas Persyaratan</h6>
+          <div class="pl-lg-4">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group ">
+                  <label class="form-control-label" for="input-email">Foto Kartu Tanda Mahasiswa</label>
+                  <div class="ktmform">
+                      <input type="file" name="anggota_ktm[]" class="form-control {{ $errors->first('anggota_ktm${[anggota]}') ? 'is-invalid' : ''}}" required>  
+                      <br>
+                      <h5>File harus berformat jpg atau png</h5>
+                      <h5>Ukuran maksimal 4MB</h5>
+                  </div>
+                  <div class="invalid-feedback">
+                      {{ $errors->first('anggota_ktm${[anggota]}') }}
+                  </div>
+                </div>
+              </div>
+            </div>             
+          </div>
+          <div class="invalid-feedback">
+            {{ $errors->first('anggota${[anggota]}') }}
+          </div>
+        </div>
+        `);
+
+        anggota++;
+        $('#jumlah_anggota').val(anggota);
+
+      }
+      
+      if (anggota == 2){
+        $('#tambahAnggota').hide();
+      }
+
+      console.log('anggota : '+anggota);
+
+      
+      $('.input-university').select2();
+      $('.input-university').prop("disabled", true);
+    }
+
+    // trigger sweet alert 
+    let removeMember = (anggotaId) => {
+      Swal.fire({
+        title: 'Apakah Anda Yakin?',
+        text: "Anda tidak bisa mengembalikan lagi !",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2F59EC',
+        cancelButtonColor: '#f5365c',
+        confirmButtonText: 'Ya, Hapus Anggota'
+      }).then((result) => {
+          hapusAnggota(anggotaId);
+      })
+    }
+
+    let hapusAnggota = (anggotaId) => {
+      console.log('anggota : '+anggota,'id : '+anggotaId);
+      
+      $(`#anggota${anggotaId}`).remove();
+      $('.fg-anggota').attr("id",`anggota1`);
+      $('.fg-anggota .anggota-title').text(`Anggota 1`);
+      $(".fg-anggota .badge").attr("onclick",`removeMember(1)`);
+      anggota--;
+      $('#jumlah_anggota').val(anggota);
+
+      if(anggota < 2){
+        $('#tambahAnggota').show();
+      }
+      console.log(anggota);
+    }
+
+    $('#acceptRequirement').on('click',()=>{
+      $(this).each(function () { 
+        this.checked = !this.checked;
+
+        if(this.checked == true){
+          $("#buatTim").prop("disabled", false);
+          console.log('check');
+          
+        } else {
+          $("#buatTim").prop("disabled", true);
+          console.log('uncheck');
+        }
+      });
+    })
   </script>
-  <script src="{{asset('vendor/jquery/dist/jquery.min.js')}}"></script>
-  <script src="{{asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
-  <script src="{{asset('vendor/js-cookie/js.cookie.js')}}"></script>
-  <script src="{{asset('vendor/jquery.scrollbar/jquery.scrollbar.min.js')}}"></script>
-  <script src="{{asset('vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js')}}"></script>
-  <!-- Optional JS -->
-  <script src="{{asset('vendor/chart.js/dist/Chart.min.js')}}"></script>
-  <script src="{{asset('vendor/chart.js/dist/Chart.extension.js')}}"></script>
-  <!-- Argon JS -->
-  <script src="{{asset('js/argon.js?v=1.2.0')}}"></script>
-</body>
-</html>
+@endsection

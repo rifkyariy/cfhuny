@@ -1,23 +1,6 @@
-<!DOCTYPE html>
-<html>
+@extends('layouts.app')
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Website Internal Gemastik - Edit Tim</title>
-  <!-- Favicon -->
-  <link rel="icon" href="{{ asset('landing/images/favicon.svg') }}" type="image/png">
-  <!-- Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
-  <!-- Icons -->
-  <link rel="stylesheet" href="{{asset('vendor/nucleo/css/nucleo.css')}}" type="text/css">
-  <link rel="stylesheet" href="{{asset('vendor/@fortawesome/fontawesome-free/css/all.min.css')}}" type="text/css">
-  <!-- Page plugins -->
-  <!-- Argon CSS -->
-  <link rel="stylesheet" href="{{asset('css/argon.css?v=1.2.0')}}" type="text/css">
-</head>
-
-<body>
+@section('content')
   <!-- Sidenav -->
   <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
     <div class="scrollbar-inner">
@@ -37,32 +20,17 @@
           @if(Auth::user()->role != "Mahasiswa")
             <li class="nav-item">
               <a class="nav-link" href="{{route('admin.index')}}">
-                <i class="ni ni-sound-wave text-primary"></i>
+                <i class="ni ni-tv-2 text"></i>
                 <span class="nav-link-text">Dashboard</span>
               </a>
             </li>
             </li>
-            @if(Auth::user()->role != "Admin")
-              <li class="nav-item">
-                <a class="nav-link active" href="{{ route('teams.index') }}">
-                  <i class="ni ni-chat-round text-primary"></i>
-                    <span class="nav-link-text">Undangan Tim</span>
-                </a>
-              </li>
-            @else
-              <li class="nav-item">
-                <a class="nav-link active" href="{{ route('teams.index') }}">
-                  <i class="ni ni-chat-round text-primary"></i>
-                    <span class="nav-link-text">Tim</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{{ route('users.index') }}">
-                  <i class="ni ni-badge text-primary"></i>
-                    <span class="nav-link-text">Pengguna</span>
-                </a>
-              </li>  
-            @endif
+            <li class="nav-item">
+              <a class="nav-link active" href="{{ route('teams.index') }}">
+                <i class="ni ni-planet text-orange"></i>
+                <span class="nav-link-text">Undangan Tim</span>
+              </a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="">
                 <i class="ni ni-single-copy-04 text-primary"></i>
@@ -101,6 +69,8 @@
     <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <!-- Search form -->
+          <!-- Navbar links -->
           <ul class="navbar-nav align-items-center  ml-md-auto ">
             <li class="nav-item d-xl-none">
               <!-- Sidenav toggler -->
@@ -149,12 +119,7 @@
               <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                   <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i></a></li>
-                  @if(Auth::user()->role != "Mahasiswa")
-                    <li class="breadcrumb-item"><a href="{{ route('admin.index') }}">Dashboard</a></li>
-                  @else
-                    <li class="breadcrumb-item"><a href="{{ route('teams.index') }}">Dashboard</a></li>
-                  @endif
-                  <li class="breadcrumb-item"><a href="{{ route('teams.show', [$team->id]) }}">Tim</a></li>
+                  <li class="breadcrumb-item"><a href="{{ route('teams.index') }}">Dashboard</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Edit Tim</li>
                 </ol>
               </nav>
@@ -178,7 +143,7 @@
         </div>
     @endif
      <div class="row">
-     <div class="col-xl-4 order-xl-2">
+     <div class="col-xl-3 order-xl-2">
             <div class="card card-profile">
             <img src="{{ asset('img/theme/img-1-1000x600.jpg') }}" alt="Image placeholder" class="card-img-top">
             <div class="row justify-content-center">
@@ -209,82 +174,46 @@
                   <i class="ni business_briefcase-24 mr-2"></i>{{ Auth::user()->prodi ? Auth::user()->prodi : "Belum ada Program Studi" }}
                 </div>
                 <div>
-                  <i class="ni education_hat mr-2"></i>Universitas Negeri Yogyakarta
+                  <i class="ni education_hat mr-2"></i>
+                  {{ $pt->name ?? 'Profil Belum Dilengkapi' }}
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-xl-8 order-xl-1">
+        <div class="col-xl-9 order-xl-1">
           <div class="card">
             <div class="card-header">
               <div class="row align-items-center">
                 <div class="col-8">
-                  <h3 class="mb-0">Undang Anggota</h3>
+                  <h3 class="mb-0">Edit Tim</h3>
                 </div>
               </div>
             </div>
             <div class="card-body">
               <form method="POST" action="{{ route('teams.update', [$team->id]) }}" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name=_method value="PUT">
-                <h6 class="heading-small text-muted mb-4">Informasi Tim</h6>
+                <input type="hidden" name="_method" value="PUT">
+                <h6 class="heading-small text-muted mb-4">Informasi tim</h6>
                 <div class="pl-lg-4">
                   <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-username">Nama Tim</label>
-                        <input type="text" name="name" value="{{ $team->name }}" id="input-username" class="form-control {{ $errors->first('name') ? 'is-invalid' : ''}}" placeholder="Nama Tim">
+                      <input type="text" name="name" id="input-username" class="form-control {{ $errors->first('name') ? 'is-invalid' : ''}}" placeholder="Nama Tim" value="{{$team->name}}" required>
                         <div class="invalid-feedback">
                             {{ $errors->first('name') }}
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-email">Cabang Lomba</label> <br>
-                        <select class="form-control {{ $errors->first('cabang_lomba') ? 'is-invalid' : ''}}" name="cabang_lomba">
-                            <option value="">- Pilih -</option>
-                            @if($team->cabang_lomba == "Penambangan Data")
-                                <option value="Penambangan Data" selected>Penambangan Data</option>
-                            @else
-                                <option value="Penambangan Data">Penambangan Data</option>
-                            @endif
-                            @if($team->cabang_lomba == "Pengembangan Bisnis TIK")
-                                <option value="Pengembangan Bisnis TIK" selected>Pengembangan Bisnis TIK</option>
-                            @else
-                                <option value="Pengembangan Bisnis TIK">Pengembangan Bisnis TIK</option>
-                            @endif
-                            @if($team->cabang_lomba == "Animasi")
-                                <option value="Animasi" selected>Animasi</option>
-                            @else
-                                <option value="Animasi">Animasi</option>
-                            @endif
-                            @if($team->cabang_lomba == "Kota Cerdas")
-                                <option value="Kota Cerdas" selected>Kota Cerdas</option>
-                            @else
-                                <option value="Kota Cerdas">Kota Cerdas</option>
-                            @endif
-                            @if($team->cabang_lomba == "Piranti Cerdas, Sistem Benam dan IOT")
-                                <option value="Piranti Cerdas, Sistem Benam dan IOT" selected>Piranti Cerdas, Sistem Benam dan IOT</option>
-                            @else
-                                <option value="Piranti Cerdas, Sistem Benam dan IOT">Piranti Cerdas, Sistem Benam dan IOT</option>
-                            @endif
-                            @if($team->cabang_lomba == "Pengembangan Aplikasi Permainan")
-                                <option value="Pengembangan Aplikasi Permainan" selected>Pengembangan Aplikasi Permainan</option>
-                            @else
-                                <option value="Pengembangan Aplikasi Permainan">Pengembangan Aplikasi Permainan</option>
-                            @endif
-                            @if($team->cabang_lomba == "Desain Pengalaman Pengguna")
-                                <option value="Desain Pengalaman Pengguna" selected>Desain Pengalaman Pengguna</option>
-                            @else
-                                <option value="Desain Pengalaman Pengguna">Desain Pengalaman Pengguna</option>
-                            @endif
-                            @if($team->cabang_lomba == "Pengembangan Perangkat Lunak")
-                                <option value="Pengembangan Perangkat Lunak" selected>Pengembangan Perangkat Lunak</option>
-                            @else
-                                <option value="Pengembangan Perangkat Lunak">Pengembangan Perangkat Lunak</option>
-                            @endif        
+                        <input id="cabang_lomba" name="cabang_lomba" type="hidden" value="{{$team->cabang_lomba}}">
+                        <select  id="input-cabang-lomba" class="form-control {{ $errors->first('cabang_lomba') ? 'is-invalid' : ''}}" name="" required>
+                          @if ($team->cabang_lomba!=null)
+                            <option value="{{$cabangLomba->id}}">{{$cabangLomba->name}}</option>
+                          @endif
                         </select>
                         <div class="invalid-feedback">
                             {{ $errors->first('cabang_lomba') }}
@@ -295,65 +224,134 @@
                 </div>
                 <hr class="my-4" />
                 <!-- Address -->
-                <h6 class="heading-small text-muted mb-4">Undang Anggota</h6>
-                <div class="pl-lg-4">
+                <h6 class="heading-small text-muted mb-4">Anggota tim</h6>
+                <div class="pl-lg-4 anggotatim">
                   <div class="row">
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label {{ $errors->first('anggota1') ? 'is-invalid' : ''}}" for="input-address">Anggota 1</label> <br>
-                        <select class="form-control" name="anggota1">
-                            <option value="">- Pilih Anggota -</option>
-                            @foreach($users as $user)
-                                @if($user->role == "Mahasiswa")
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback">
-                            {{ $errors->first('anggota1') }}
+                    <div class="col-lg-12">
+                      <div class="anggota-con">
+                        @foreach ($members as $key => $member)
+                        <div class="form-group fg-anggota" id="{{$key == 0? 'Ketua' : 'anggota'.$key}}">
+                          <label class="anggota-title form-control-label {{ $errors->first('anggota${[anggota]}') ? 'is-invalid' : ''}}" for="input-address">{{$key == 0? 'Ketua' : 'Anggota '.$key}}</label> 
+                          @if ($key != 0)
+                            <input type="hidden" name="anggota_id[]" id="input-username" class="form-control {{ $errors->first('anggota_id[]') ? 'is-invalid' : ''}}"  value="{{$member->id}}">    
+                            <a ><span onclick="hapusAnggota({{'anggota'.$key}})" class=" ml-2 badge badge-pill badge-danger my-1">Hapus Anggota</span></a>
+                          @endif
+                          <br>
+                          <h6 class="heading-small text-muted mb-4">Informasi {{$key == 0? 'Ketua' : 'Anggota'}}</h6>
+                          <div class="pl-lg-4">
+                            <div class="row">
+                              <div class="col-lg-6">
+                                <div class="form-group">
+                                  <label class="form-control-label" for="input-username">Nama Lengkap</label>
+                                <input type="text" name="anggota_name[]" id="input-username" class="form-control {{ $errors->first('anggota_name[]') ? 'is-invalid' : ''}}" placeholder="Nama Lengkap" value="{{$member->name}}" {{$key==0?'disabled':''}}  required>
+                                  <div class="invalid-feedback">
+                                      {{ $errors->first('name') }}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-lg-6">
+                                <div class="form-group">
+                                  <label class="form-control-label" for="input-email">Alamat Email</label>
+                                  <input type="email" name="anggota_email[]" id="input-email" placeholder="Alamat Email" class="form-control {{ $errors->first('anggota_email[]') ? 'is-invalid' : ''}}" value="{{$member->email}}" {{$key==0?'disabled':''}} >
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-lg-6">
+                                  <div class="form-group">
+                                    <label class="form-control-label" for="input-university">Universitas</label>
+                                    <input id="input-university-id" name="anggota_university_id[]" type="hidden" value="{{ Auth::user()->university_id }}">
+                                    <select class="form-control input-university" id="input-university">
+                                      @if ($pt!=null)
+                                        <option value="{{$pt->id}}">{{$pt->name}}</option>
+                                      @endif
+                                    </select>
+                                    <div class="invalid-feedback">
+                                      {{ $errors->first('anggota_university_id${[anggota]}') }}
+                                    </div>
+                                  </div>
+                              </div>
+                              <div class="col-lg-6">
+                                  <div class="form-group">
+                                    <label class="form-control-label" for="input-address">Program Studi</label>
+                                    <input id="input-address" name="anggota_prodi[]" class="form-control {{ $errors->first('anggota_prodi[]') ? 'is-invalid' : ''}}" placeholder="Program Studi" type="text" value="{{$member->prodi}}" {{$key==0?'disabled':''}} required>
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('anggota_prodi${[anggota]}') }}
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-lg-6">
+                                  <div class="form-group">
+                                    <label class="form-control-label" for="input-address">NIM</label>
+                                    <input id="input-address" name="anggota_nim[]" class="form-control {{ $errors->first('anggota_nim[]') ? 'is-invalid' : ''}}" placeholder="Nomor Induk Mahasiswa" type="text" value="{{$member->nim}}" {{$key==0?'disabled':''}} required>
+                                    <div class="invalid-feedback">
+                                      {{ $errors->first('anggota_nim${[anggota]}') }}
+                                    </div>
+                                  </div>
+                              </div>
+                              <div class="col-lg-6">
+                                  <div class="form-group">
+                                    <label class="form-control-label" for="input-username">No Hp</label>
+                                    <input type="text" name="anggota_phone[]" id="input-username" class="form-control {{ $errors->first('anggota_phone[]') ? 'is-invalid' : ''}}" value="{{$member->phone}}" placeholder="No Hp" {{$key==0?'disabled':''}} required>
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('anggota_phone${[anggota]}') }}
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+                            @if ($key == 0)
+                              <label ><b>* Anda tidak bisa mengubah informasi Ketua disini, Anda bisa mengubah melalui menu <a href="{{url('profile')}}">Profil</a>. </b></label>
+                            @endif
+                          </div>
+                          <hr class="my-4" />
+                          <!-- Address -->
+                          @if ($key!=null)
+                            <h6 class="heading-small text-muted mb-4">Upload Berkas Persyaratan</h6>
+                            <div class="pl-lg-4">
+                              <div class="row">
+                                <div class="col-lg-6">
+                                  <div class="form-group ">
+                                    <label class="form-control-label" for="input-email">Foto Kartu Tanda Mahasiswa</label>
+                                    <div class="ktmform{{$key}}">
+                            
+                                    @if ($member->ktm != null)
+                                      <a class="btn btn-cl-white btn-form btn-warning" id="downloadKTM" onclick="downloadKTM(this,{{$key}},'{{$member->ktm}}')">  Download KTM</a>
+                                      <a class="btn btn-cl-white btn-form btn-success" id="reuploadKTM" onclick="reuploadKTM({{$key}},'{{$member->ktm}}')">Upload Ulang</a>
+                                    @else  
+                                      <input type="file" name="anggota_ktm[]" class="form-control {{ $errors->first('anggota_ktm${[anggota]}') ? 'is-invalid' : ''}}" required>  
+                                      <br>
+                                      <h5>File harus berformat jpg atau png</h5>
+                                      <h5>Ukuran maksimal 4MB</h5>  
+                                    @endif
+                                        
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('anggota_ktm${[anggota]}') }}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>             
+                            </div>
+                            <div class="invalid-feedback">
+                              {{ $errors->first('anggota${[anggota]}') }}
+                            </div>
+                          @endif
                         </div>
-                        <br>
-                       <h5>* Undangan anggota sebelumnya tidak dibatalkan</h5>
-                       <h5>* Kosongkan jika tidak ingin mengundang anggota baru</h5>
+                        @endforeach
                       </div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-address">Anggota 2</label> <br>
-                        <select  class="form-control {{ $errors->first('anggota2') ? 'is-invalid' : ''}}" name="anggota2">
-                            <option value="">- Pilih Anggota -</option>
-                            @foreach($users as $user)
-                                @if($user->role == "Mahasiswa")
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback">
-                            {{ $errors->first('anggota2') }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label {{ $errors->first('dosbing') ? 'is-invalid' : ''}}" for="input-username">Dosen Pembimbing</label> <br>
-                        <select  class="form-control" name="dosbing">
-                            <option value="">- Pilih Anggota -</option>
-                            @foreach($users as $user)
-                                @if($user->role == "Dosen")
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback">
-                            {{ $errors->first('dosbing') }}
-                        </div>
-                      </div>
+
+                      <a class="btn-cl-white btn btn-form btn-success" id="tambahAnggota" onclick="tambahAnggota()">Tambah Anggota</a><br><br>
                     </div>
                   </div>           
                 </div>
+
+                <input id="jumlah_anggota" name="jumlah_anggota" type="hidden">
+                <input id="anggota_ganti_ktm" name="anggota_ganti_ktm" type="hidden">
+                <hr class="my-4" />
                 <div class="pl-lg-4">
-                    <button type="submit" class="btn btn-primary">Edit Tim</button>
-                    <a href="{{ route('teams.show', [$team->id]) }}" class="btn btn-danger">Batal</a>
+                    <button type="submit" id="buatTim" class="btn btn-primary" >Update Perubahan</button>
                 </div>
               </form>
             </div>
@@ -372,68 +370,255 @@
       </footer>
     </div>
   </div>
-  <!-- Argon Scripts -->
-  <!-- Core -->
+@endsection
+
+@section('localjs')
+  <script>
+    let anggota = {{$memberCount}};
+
+    $(document).ready(function() {
+      // initiate select2
+      $('#input-cabang-lomba').select2({
+        ajax: {
+          url: '{{url("/api/sel2/cabanglomba")}}',
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            var query = {
+              search: params.term
+            }
+
+            // Query parameters will be ?search=[term]&page=[page]
+            return query;
+          },
+          processResults: function (data) {
+            return {
+              results: $.map(data, function(obj) {
+                return {
+                  id: obj.id,
+                  text: obj.text
+                };
+              })
+            };
+          },
+          cache: true
+        },
+        placeholder: 'Pilih Cabang Lomba'
+      });
+
+      // init state
+      // disable univeristas select
+      $('.input-university').select2();
+      $('.input-university').prop("disabled", true);
+
+      // adding jumlah anggota
+      $('#jumlah_anggota').val(anggota);
+
+      // hide tambah anggota button when anggota == 2
+      if (anggota == 2){
+        $('#tambahAnggota').hide();
+      }
+
+    });
+
+    // select2 onchange trigger
+    $('#input-cabang-lomba').on('change',() => {
+      let id = $('#input-cabang-lomba :selected').val();
+      $('#cabang_lomba').val(id) ;
+    })
+
+    // fungsi untuk tambah anggota
+    let tambahAnggota = () => {
+      // html component
+      if (anggota<=2) {
+        $('.anggota-con').append(` 
+        <div class="form-group fg-anggota" id="anggota${anggota+1}">
+          <label class="anggota-title form-control-label {{ $errors->first('anggota${[anggota]}') ? 'is-invalid' : ''}}" for="input-address">Anggota  ${anggota+1}</label> 
+          <a ><span onclick="hapusAnggota(${anggota+1})" class=" ml-2 badge badge-pill badge-danger my-1">Hapus Anggota</span></a>
+          <br>
+          <h6 class="heading-small text-muted mb-4">Informasi Anggota</h6>
+          <div class="pl-lg-4">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label class="form-control-label" for="input-username">Nama Lengkap</label>
+                  <input type="text" name="anggota_name[]" id="input-username" class="form-control {{ $errors->first('anggota_name${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Nama Lengkap"  required>
+                  <div class="invalid-feedback">
+                      {{ $errors->first('name') }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group">
+                  <label class="form-control-label" for="input-email">Alamat Email</label>
+                  <input type="email" name="anggota_email[]" id="input-email" placeholder="Alamat Email" class="form-control {{ $errors->first('anggota_email${[anggota]}') ? 'is-invalid' : ''}}"  >
+                  </div>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-university">Universitas</label>
+                    <input id="input-university-id" name="anggota_university_id[]" type="hidden" value="{{ Auth::user()->university_id }}">
+                    <select class="form-control input-university" id="input-university">
+                      @if ($pt!=null)
+                        <option value="{{$pt->id}}">{{$pt->name}}</option>
+                      @endif
+                    </select>
+                    <div class="invalid-feedback">
+                      {{ $errors->first('anggota_university_id${[anggota]}') }}
+                    </div>
+                  </div>
+              </div>
+              <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-address">Program Studi</label>
+                    <input id="input-address" name="anggota_prodi[]" class="form-control {{ $errors->first('anggota_prodi${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Program Studi" type="text" value="" required>
+                    <div class="invalid-feedback">
+                        {{ $errors->first('anggota_prodi${[anggota]}') }}
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-address">NIM</label>
+                    <input id="input-address" name="anggota_nim[]" class="form-control {{ $errors->first('anggota_nim${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Nomor Induk Mahasiswa" type="text" value="" required>
+                    <div class="invalid-feedback">
+                      {{ $errors->first('anggota_nim${[anggota]}') }}
+                    </div>
+                  </div>
+              </div>
+              <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-username">No Hp</label>
+                    <input type="text" name="anggota_phone[]" id="input-username" class="form-control {{ $errors->first('anggota_phone${[anggota]}') ? 'is-invalid' : ''}}" value="" placeholder="No Hp" required>
+                    <div class="invalid-feedback">
+                        {{ $errors->first('anggota_phone${[anggota]}') }}
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <hr class="my-4" />
+          <!-- Address -->
+          <h6 class="heading-small text-muted mb-4">Upload Berkas Persyaratan</h6>
+          <div class="pl-lg-4">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group ">
+                  <label class="form-control-label" for="input-email">Foto Kartu Tanda Mahasiswa</label>
+                  <div class="ktmform">
+                      <input type="file" name="anggota_ktm[]" class="form-control {{ $errors->first('anggota_ktm${[anggota]}') ? 'is-invalid' : ''}}" required>  
+                      <br>
+                      <h5>File harus berformat jpg atau png</h5>
+                      <h5>Ukuran maksimal 4MB</h5>
+                  </div>
+                  <div class="invalid-feedback">
+                      {{ $errors->first('anggota_ktm${[anggota]}') }}
+                  </div>
+                </div>
+              </div>
+            </div>             
+          </div>
+          <div class="invalid-feedback">
+            {{ $errors->first('anggota${[anggota]}') }}
+          </div>
+        </div>
+        `);
+
+        anggota++;
+        $('#jumlah_anggota').val(anggota);
+
+      }
+      
+      // hide tambah anggota button when anggota == 2
+      if (anggota == 2){
+        $('#tambahAnggota').hide();
+      }
+      
+      // disable univeristas select
+      $('.input-university').select2();
+      $('.input-university').prop("disabled", true);
+    }
+
+    // fungsi untuk hapus anggota (tampil alert)
+    let removeMember = (link) => {
+      Swal.fire({
+        title: 'Apakah Anda Yakin?',
+        text: "Anda tidak bisa mengembalikan lagi !",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2F59EC',
+        cancelButtonColor: '#f5365c',
+        confirmButtonText: 'Ya, Hapus Member'
+      }).then((result) => {
+          window.location = link;
+      })
+    }
+
+    // real fungsi untuk hapus anggota
+    let hapusAnggota = (anggotaId) => {
+      
+      // change other form anggota when exist
+      $(`#anggota${anggotaId}`).remove();
+      $('.fg-anggota').attr("id",`anggota1`);
+      $('.fg-anggota .anggota-title').text(`Anggota 1`);
+      $(".fg-anggota .badge").attr("onclick",`hapusAnggota(1)`);
+      anggota--;
+
+      // mengupdate jumlah anggota
+      $('#jumlah_anggota').val(anggota);
+
+      // show tambah anggota button when anggota < 2
+      if(anggota < 2){
+        $('#tambahAnggota').show();
+      }
+    }
+
+    
+    // add loading spinner
+    let = addLoading = (selector) => {
+      $(selector).prepend('<i class="fa fa-spinner loading"></i>');
+
+      setTimeout(function() {
+        $(`${selector} i`).removeClass('fa fa-spinner loading');
+      }, 5800); 
+    }
+
+    // download KTM 
+    let downloadKTM = (clickedEl,member,file) => {
+      addLoading(clickedEl);
+      if(member!=0){
+        window.location = `/api/file/ktm?filename=${file}`;
+      }
+
+    };
+
+    // reupload KTM
+    let reuploadKTM = (key,file) => {
+      $(`.ktmform${key}`).html(`
+        <div class="row">
+          <div class="col-lg-9">
+            <input type="file" name="anggota_ktm[]" class="form-control {{ $errors->first('ktm') ? 'is-invalid' : ''}}" required>  
+            <br>
+            <h5>File harus berformat jpg atau png</h5>
+            <h5>Ukuran maksimal 4MB</h5>
+          </div>
+          <div class="col-lg-3">
+            <a class="btn btn-cl-white btn-form btn-danger" id="batalReupload" onclick="batalReupload(${key},'${file}')">Batal</a>
+          </div>
+        <div>
+      `);
+      $('#anggota_ganti_ktm').val(key);
+    };
+
+    let batalReupload = (key,file) => {
+      $(`.ktmform${key}`).html(`
+        <a class="btn btn-cl-white btn-form btn-warning" id="downloadKTM" onclick="downloadKTM(this,${key},'${file}')">  Download KTM</a>
+        <a class="btn btn-cl-white btn-form btn-success" id="reuploadKTM" onclick="reuploadKTM(${key},'${file}')">Upload Ulang</a>
+      `);
+    };
   </script>
-  <script src="{{asset('vendor/jquery/dist/jquery.min.js')}}"></script>
-  <script src="{{asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
-  <script src="{{asset('vendor/js-cookie/js.cookie.js')}}"></script>
-  <script src="{{asset('vendor/jquery.scrollbar/jquery.scrollbar.min.js')}}"></script>
-  <script src="{{asset('vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js')}}"></script>
-  <!-- Optional JS -->
-  <script src="{{asset('vendor/chart.js/dist/Chart.min.js')}}"></script>
-  <script src="{{asset('vendor/chart.js/dist/Chart.extension.js')}}"></script>
-  <!-- Argon JS -->
-  <script src="{{asset('js/argon.js?v=1.2.0')}}"></script>
-</body>
-</html>
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    @if(session('error'))
-        <script>
-          alert("{{session('error')}}");
-        </script>
-    @endif
-    <form action="{{ route('teams.update', [$team->id]) }}" method="POST">
-        @csrf
-        <input type="hidden" name="_method" value="PUT">
-        Nama tim : <input type="text" name="name" value="{{ $team->name }}"> <br>
-        Anggota 1 : 
-        <select name="anggota1" id="">
-            <option value="" selected="selected">- Pilih -</option>
-            @foreach($users as $user)
-                @if($user->role == "Mahasiswa")
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                @endif
-            @endforeach
-        </select> <br>
-        Anggota 2 : 
-        <select name="anggota2" id="">
-            <option value="" selected="selected">- Pilih -</option>
-            @foreach($users as $user)
-                @if($user->role == "Mahasiswa")
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                @endif            
-            @endforeach
-        </select> <br>
-        Dosbing : 
-        <select name="dosbing" id="">
-            <option value="" selected="selected">- Pilih -</option>
-            @foreach($users as $user)
-                @if($user->role == "Dosen")
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                @endif            
-            @endforeach
-        </select> <br> <br>
-        <button type="submit">Submit</button>
-    </form>
-</body> -->
-</html>
+@endsection

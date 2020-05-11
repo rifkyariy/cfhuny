@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
 {
-    public function users()
+    public function members()
     {
-        return $this->belongsToMany('App\User')->withPivot('role','status')->withTimestamps();
+        return $this->belongsToMany('App\Member')->withPivot('role')->withTimestamps();
     }
 
     public function proposals() {

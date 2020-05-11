@@ -16,7 +16,8 @@
         "laravel/framework": "^6.2",
         "laravel/socialite": "^4.3",
         "laravel/tinker": "^2.0",
-        "nao-pon/flysystem-google-drive": "^1.1"
+        "nao-pon/flysystem-google-drive": "^1.1",
+        "oscarafdev/migrations-generator": "2.0.18"
     },
     "require-dev": {
         "facade/ignition": "^1.4",

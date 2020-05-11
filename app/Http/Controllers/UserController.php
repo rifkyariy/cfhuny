@@ -20,7 +20,11 @@ class UserController extends Controller
     {
         $userLoginId = Auth::user()->id;
         $user = User::findOrFail($userLoginId);
-        $pt = PerguruanTinggi::findOrFail($user->university_id);
+        
+        $pt = PerguruanTinggi::find($user->university_id);
+        if(!$pt){
+            $pt = '';
+        }
 
         return view(
             'users.profile', 
@@ -28,6 +32,7 @@ class UserController extends Controller
                 'user' => $user,
                 'pt' => $pt
             ]);
+
     }
 
     public function update(Request $request, $userId)

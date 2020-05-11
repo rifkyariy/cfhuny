@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\PerguruanTinggi;
+use App\CabangLomba;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// select2 Dropdown
 Route::get('/sel2/perguruantinggi', function(Request $request){
     if($request!=null){
         $search = $request->input('search');
@@ -29,6 +31,18 @@ Route::get('/sel2/perguruantinggi', function(Request $request){
     return response()->json($result, 200) ;
 });
 
+Route::get('/sel2/cabanglomba', function(Request $request){
+    if($request!=null){
+        $search = $request->input('search');
+        $result = CabangLomba::select('id','name as text')->where('name','like','%'.$search.'%')->orderBy('id')->get();
+    }else{
+        $result = CabangLomba::select('id','name as text')->orderBy('id')->get();
+    }
+    
+    return response()->json($result, 200) ;
+});
+
+//File download
 Route::get('/file/ktm', function(Request $request){
     $filename = $request->input('filename');
     $dir = '/';

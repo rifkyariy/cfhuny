@@ -1,23 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Website Internal Gemastik - User Dashboard</title>
-  <!-- Favicon -->
-  <link rel="icon" href="{{ asset('landing/images/favicon.svg') }}" type="image/png">
-  <!-- Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
-  <!-- Icons -->
-  <link rel="stylesheet" href="{{asset('vendor/nucleo/css/nucleo.css')}}" type="text/css">
-  <link rel="stylesheet" href="{{asset('vendor/@fortawesome/fontawesome-free/css/all.min.css')}}" type="text/css">
-  <!-- Page plugins -->
-  <!-- Argon CSS -->
-  <link rel="stylesheet" href="{{asset('css/argon.css?v=1.2.0')}}" type="text/css">
-</head>
+@extends('layouts.app')
 
-<body>
-  <!-- Sidenav -->
+@section('content')
+  
+  <!-- Sidenav -->  
   <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
     <div class="scrollbar-inner">
       <!-- Brand -->
@@ -189,21 +174,9 @@
                   <tr>
                     <th scope="col" class="sort" data-sort="name">Nama Tim</th>
                     <th scope="col" class="sort" data-sort="status">Cabang Lomba</th>
-                    @if(Auth::user()->role != "Admin")
-                      <th scope="col">Jabatan di Tim</th>
-                      <th scope="col" class="sort" data-sort="completion">Status di Tim</th>
-                    @else
-                      <th scope="col">Ketua Tim</th>
-                    @endif
-                    <th scope="col" class="sort">Detail Tim</th>
-                    @if(Auth::user()->role != "Admin")
-                      <th scope="col" class="sort">Setujui</th>
-                      <th scope="col" class="sort">Tolak</th>
-                    @else
-                      <th scope="col" class="sort">Proposal</th>
-                      <th scope="col" class="sort">Ubah</th>
-                      <th scope="col" class="sort">Hapus</th>
-                    @endif
+                    <th scope="col" class="sort" data-sort="completion">Status</th>
+                    <th scope="col" class="sort">Submission</th>
+                    <th scope="col" class="sort">Aksi</th>
                   </tr>
                 </thead>
                 <tbody class="list">
@@ -213,117 +186,55 @@
                       <div class="media-body">
                         <span class="name mb-0 text-sm"><a href="{{ route('teams.show', ['team' => $team->id]) }}">{{ $team->name }}</a></span>
                       </div>
+                      <span class="mt-1 badge badge-pill badge-info">
+                        {{ $team->cabang_lomba_detail->nickname }}
+                      </span>
                     </th>
                     <td>
                       <div class="media-body">
-                        <span class="name mb-0 text-sm">{{ $team->cabang_lomba }}</span>
+                        <span class="name mb-0 text-sm">{{ $team->cabang_lomba_detail->name }}</span>
                       </div>
                     </td>
-                    @if(Auth::user()->role != "Admin")
-                      <td>
-                        <div class="media-body">
-                          <span class="name mb-0 text-sm">{{ $team->pivot->role }}</span>
-                        </div>
-                      </td>
                       <td>
                           @if($team->pivot->status == "Menunggu")
                             <h3>
-                            <span class="badge badge-info">
+                            <span class="badbadge badge-pillge badge-info">
                               Menunggu Persetujuan
                             </span>
                             </h3>
                           @elseif($team->pivot->status == "Disetujui")
                             <h3>
-                            <span class="badge badge-success">
+                            <span class="badge badge-pill badge-success">
                               Terdaftar
                             </span>
                             </h3>
                           @else
                             <h3>
-                            <span class="badge badge-danger">
-                              Ditolak
+                            <span class="badge badge-pill badge-warning">
+                              Belum Upload
                             </span>
                             </h3>
                           @endif
                         </span>
                       </td>
-                    @endif
-                    @if(Auth::user()->role == "Admin")
-                      <td>
-                        <div class="media-body">
-                          @foreach($team->users as $user)
-                            @if($user->pivot->role == "Ketua")
-                              <span class="name mb-0 text-sm">{{ $user->name }}</span>
-                            @endif
-                          @endforeach
-                        </div>
-                      </td>  
-                    @endif  
+                   
                     <td>
-                      <a href="{{ route('teams.show', [$team->id]) }}" class="btn btn-info btn-sm">Detail Tim</button>
+                      <a href="{{ route('teams.show', [$team->id]) }}" class="btn btn-warning btn-sm">Upload Submission</a>
+                      <a href="{{ route('teams.show', [$team->id]) }}" class="btn btn-success btn-sm">Download</a>
+                      <a href="{{ route('teams.show', [$team->id]) }}" class="btn btn-danger btn-sm">Hapus</a>
                     </td>
-                    @if(Auth::user()->role != "Admin")
-                      <td>
-                        @if($team->pivot->status != "Menunggu")
-                          N/A
-                        @else
-                          <form action="{{ route('teams.approve', [$team->id]) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="_method" value="PUT">
-                            <button type="submit" class="btn btn-primary btn-sm">Setujui</button>
-                          </form>
-                        @endif
-                      </td>
-                      <td>
-                        @if($team->pivot->status != "Menunggu")
-                          N/A
-                        @else
-                          <form action="{{ route('teams.reject', [$team->id]) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="_method" value="PUT">
-                            <button type="submit" class="btn btn-danger btn-sm">Tolak</button>
-                          </form>
-                        @endif                   
-                      </td>
-                    @else
-                      <td>
-                        <a href="{{ route('proposals.index', [$team->id]) }}" class="btn btn-success btn-sm">Proposal</a>
-                      </td>
-                      <td>
-                        <a href="{{ route('teams.edit', [$team->id]) }}" class="btn btn-warning btn-sm">Ubah</a>
-                      </td>
-                      <td>
-                        <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{ $team->id }}">
-                          Hapus
-                        </button>
+                    <td>
+                      <a href="{{ route('teams.show', [$team->id]) }}" class="btn btn-primary btn-sm">Detail </a>
+                      <a href="{{ route('teams.edit', [$team->id]) }}" class="btn btn-info btn-sm">Edit</a>
+                      
 
-                        <!-- Modal -->
-                        <div class="modal fade" id="exampleModal-{{ $team->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel-{{ $team->id }}" aria-hidden="true">
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel-{{ $team->id }}">Peringatan</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <h3>Anda yakin ingin menghapus tim ini?</h3>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                <form action="{{ route('teams.destroy', [$team->id]) }}" method="POST">
-                                  @csrf
-                                  <input type="hidden" name="_method" value="DELETE">
-                                  <button type="submit" class="btn btn-danger">Hapus</button>
-                                </form>                                
-                              </div>
-                            </div>
-                          </div>
-                        </div>                      
-                      </td>
-                    @endif
+                      <a 
+                        id="hapusTim" 
+                        onclick="removeTeam('{{ route('teams.destroy', [$team->id])}}')" 
+                        class="btn btn-cl-white btn-danger btn-sm"
+                        >
+                        Hapus</a>
+                    </td>
                   </tr>
                   @endforeach
                 </tbody>
@@ -356,18 +267,58 @@
       </footer>
     </div>
   </div>
-  <!-- Argon Scripts -->
-  <!-- Core -->
-  </script>
-  <script src="{{asset('vendor/jquery/dist/jquery.min.js')}}"></script>
-  <script src="{{asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
-  <script src="{{asset('vendor/js-cookie/js.cookie.js')}}"></script>
-  <script src="{{asset('vendor/jquery.scrollbar/jquery.scrollbar.min.js')}}"></script>
-  <script src="{{asset('vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js')}}"></script>
-  <!-- Optional JS -->
-  <script src="{{asset('vendor/chart.js/dist/Chart.min.js')}}"></script>
-  <script src="{{asset('vendor/chart.js/dist/Chart.extension.js')}}"></script>
-  <!-- Argon JS -->
-  <script src="{{asset('js/argon.js?v=1.2.0')}}"></script>
-</body>
-</html>
+@endsection
+  
+@section('localjs')
+<script>
+  let removeMember = (url) => {
+    Swal.fire({
+      title: 'Apakah Anda Yakin?',
+      text: "Anda tidak bisa mengembalikan lagi !",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#2F59EC',
+      cancelButtonColor: '#f5365c',
+      confirmButtonText: 'Ya, Hapus Member'
+    }).then((result) => {
+        window.location = url;
+    })
+  }
+
+  let removeTeam = (url) => {
+    Swal.fire({
+      title: 'Apakah Anda Yakin?',
+      text: "Anda tidak bisa mengembalikan lagi !",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#2F59EC',
+      cancelButtonColor: '#f5365c',
+      confirmButtonText: 'Ya, Hapus Tim'
+    }).then((result) => {
+      console.log(result);
+      if (result.value) {
+        $.ajax({
+            url: url,
+            type: "DELETE", 
+            data: {
+              "_token": $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(result) {
+              if(result.status == 200){
+                Swal.fire(
+                  'Terhapus!',
+                  'Tim berhasil dihapus.',
+                  'success'
+                ).then((result) => {
+                  window.location = "{{ url('/teams')}}";
+                });
+              }
+            }
+        });
+      }else{
+        event.preventDefault();
+      }
+    })
+  }
+</script> 
+@endsection

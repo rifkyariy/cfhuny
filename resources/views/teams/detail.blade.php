@@ -1,24 +1,8 @@
-<!DOCTYPE html>
-<html>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Website Internal Gemastik - Detail Tim</title>
-  <!-- Favicon -->
-  <link rel="icon" href="{{ asset('landing/images/favicon.svg') }}" type="image/png">
-  <!-- Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
-  <!-- Icons -->
-  <link rel="stylesheet" href="{{asset('vendor/nucleo/css/nucleo.css')}}" type="text/css">
-  <link rel="stylesheet" href="{{asset('vendor/@fortawesome/fontawesome-free/css/all.min.css')}}" type="text/css">
-  <!-- Page plugins -->
-  <!-- Argon CSS -->
-  <link rel="stylesheet" href="{{asset('css/argon.css?v=1.2.0')}}" type="text/css">
-</head>
+@extends('layouts.app')
 
-<body>
-  <!-- Sidenav -->
+@section('content')
+    <!-- Sidenav -->
   <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
     <div class="scrollbar-inner">
       <!-- Brand -->
@@ -184,68 +168,60 @@
           <div class="card">
             <!-- Card header -->
             <div class="card-header border-0">
-              <h3 class="mb-0">{{ $team->name }}</h3>
+              <span class="badge badge-pill badge-info mb-1">{{ $cabanglomba->name }}</span>
+              <h2 class="mt-1"><b>{{ $team->name }}</b></h2>
+              <h4 class="mb-0">{{ $pt->name }}</h4>
+              <br>
+              <nav class="" aria-label="...">
+              @if(Auth::user()->role == "Mahasiswa")
+                <a href="{{ route('teams.edit', [$team->id])}}" class="btn-cl-white btn btn-primary">Edit Tim</a> 
+                <a id="hapusTim" onclick="removeTeam('{{ route('teams.destroy', [$team->id])}}')" class="btn-cl-white btn btn-danger">Hapus Tim</a> 
+                <a href="{{ route('teams.edit', [$team->id])}}" class="btn-cl-white btn btn-warning">Upload Submission</a> 
+              @endif
+              </nav>
+              <br>
             </div>
             <!-- Light table -->
             <div class="table-responsive">
               <table class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col" class="sort" data-sort="name">Nama Anggota</th>
-                    <!-- <th scope="col" class="sort" data-sort="budget">Nama Ketua</th> -->
-                    <th scope="col" class="sort" data-sort="status">Cabang Lomba</th>
+                    <th scope="col" class="sort" >Nama Anggota</th>
+                    <th scope="col" class="sort" >Program Studi</th>
                     <th scope="col">Jabatan</th>
-                    <th scope="col" class="sort" data-sort="completion">Status</th>
                     @if(Auth::user()->role == "Mahasiswa")
-                      <th scope="col" class="sort">Proposal Tim</th>
+                    {{-- <th scope="col" class="sort">Proposal Tim</th> --}}
                     @endif
+                    <th scope="col" class="sort" >Aksi</th>
                   </tr>
                 </thead>
                 <tbody class="list">
-                  @foreach($team->users as $user)
+                  @foreach($team->members as $key => $member)
                   <tr>
                     <th scope="row">
                       <div class="media-body">
-                        <span class="name mb-0 text-sm">{{ $user->name }}</span>
+                        <span class="name mb-0 text-sm">{{ $member->name }}</span>
                       </div>
                     </th>
                     <td>
                       <div class="media-body">
-                        <span class="name mb-0 text-sm">{{ $team->cabang_lomba }}</span>
+                        <span class="name mb-0 text-sm">{{ $member->prodi }}</span>
                       </div>
                     </td>
                     <td>
                       <div class="media-body">
-                        <span class="name mb-0 text-sm">{{ $user->pivot->role }}</span>
+                        <span class="name mb-0 text-sm">{{ $member->pivot->role == 'Anggota'? $member->pivot->role.' '.$key++:'Ketua' }}</span>
                       </div>
                     </td>
-                    <td>
-                        @if($user->pivot->status == "Menunggu")
-                          <h3>
-                          <span class="badge badge-info">
-                            Menunggu
-                          </span>
-                          </h3>
-                        @elseif($user->pivot->status == "Disetujui")
-                          <h3>
-                          <span class="badge badge-success">
-                            Terdaftar
-                          </span>
-                          </h3>
-                        @else
-                          <h3>
-                          <span class="badge badge-danger">
-                            Ditolak
-                          </span>
-                          </h3>
-                        @endif
-                      </span>
-                    </td>
                     @if(Auth::user()->role == "Mahasiswa")
-                      <td>
+                      {{-- <td>
                         <a href="{{ route('proposals.index', [$team->id]) }}" class="btn btn-info btn-sm">Lihat Proposal</a>
-                      </td>
+                      </td> --}}
                     @endif
+                      <td>
+                        <a onclick="removeMember('{{ route('teams.removemember', [$team->id,$member->id])}}')" class="btn-cl-white remove-member btn btn-danger btn-sm {{$member->user_id==Auth::user()->id?'disabled':''}}" {{$member->user_id==Auth::user()->id?'disabled':''}}>Hapus</a> 
+                        <a href="{{ route('teams.edit', [$team->id])}}" class="btn-cl-white btn btn-success btn-sm ">Download Sertifikat</a> 
+                      </td>
                   </tr>
                   @endforeach
                 </tbody>
@@ -254,11 +230,7 @@
 
             <!-- Card footer -->
             <div class="card-footer py-4">
-              <nav aria-label="...">
-              @if(Auth::user()->role == "Mahasiswa")
-                <a href="{{ route('teams.edit', [$team->id])}}" class="btn btn-primary">Edit Tim</a> 
-              @endif
-              </nav>
+              
             </div>
           </div>
         </div>
@@ -276,50 +248,62 @@
       </footer>
     </div>
   </div>
-  <!-- Argon Scripts -->
-  <!-- Core -->
-  </script>
-  <script src="{{asset('vendor/jquery/dist/jquery.min.js')}}"></script>
-  <script src="{{asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
-  <script src="{{asset('vendor/js-cookie/js.cookie.js')}}"></script>
-  <script src="{{asset('vendor/jquery.scrollbar/jquery.scrollbar.min.js')}}"></script>
-  <script src="{{asset('vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js')}}"></script>
-  <!-- Optional JS -->
-  <script src="{{asset('vendor/chart.js/dist/Chart.min.js')}}"></script>
-  <script src="{{asset('vendor/chart.js/dist/Chart.extension.js')}}"></script>
-  <!-- Argon JS -->
-  <script src="{{asset('js/argon.js?v=1.2.0')}}"></script>
-</body>
-</html>
+@endsection
+
+@section('localjs')
+  <script>
+    let removeMember = (url) => {
+      Swal.fire({
+        title: 'Apakah Anda Yakin?',
+        text: "Anda tidak bisa mengembalikan lagi !",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2F59EC',
+        cancelButtonColor: '#f5365c',
+        confirmButtonText: 'Ya, Hapus Member'
+      }).then((result) => {
+          window.location = url;
+      })
+    }
+
+    let removeTeam = (url) => {
+      Swal.fire({
+        title: 'Apakah Anda Yakin?',
+        text: "Anda tidak bisa mengembalikan lagi !",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2F59EC',
+        cancelButtonColor: '#f5365c',
+        confirmButtonText: 'Ya, Hapus Tim'
+      }).then((result) => {
+        console.log(result);
+        if (result.value) {
+          $.ajax({
+              url: url,
+              type: "DELETE", 
+              data: {
+                "_token": $('meta[name="csrf-token"]').attr('content')
+              },
+              success: function(result) {
+                if(result.status == 200){
+                  Swal.fire(
+                    'Terhapus!',
+                    'Tim {{ $team->name }} berhasil dihapus.',
+                    'success'
+                  ).then((result) => {
+                    window.location = "{{ url('teams')}}";
+                  });
+                }
+              }
+          });
+        }else{
+          event.preventDefault();
+        }
+      })
+    }
+  </script>    
+@endsection
 
 
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-@if(session('error'))
-        <script>
-          alert("{{session('error')}}");
-        </script>
-    @endif
-Anggota
-<ul>
-    @foreach($team->users as $user)
-        @if($user->role == "Mahasiswa")
-            <li>{{ $user->name}} - {{ $user->pivot->role}} - {{ $user->pivot->status }}</li>
-        @endif
-    @endforeach
-</ul>
-<br>
-Dosbing
-    @foreach($team->users as $user)
-        @if($user->role == "Dosen")
-            <li>{{ $user->name}} - {{ $user->pivot->role}} - {{ $user->pivot->status }}</li>
-        @endif
-    @endforeach    
-</body>
-</html> -->
+
+

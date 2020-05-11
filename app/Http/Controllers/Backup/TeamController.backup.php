@@ -280,19 +280,21 @@ class TeamController extends Controller
     public function edit($teamId)
     {
         $team = Team::findOrFail($teamId);
-        $userLogin = Auth::user()->id;
-        $users = User::all()->except($userLogin);
+        // $userLogin = Auth::user()->id;
+        // $users = User::all()->except($userLogin);
 
-        if(Auth::user()->role == "Admin") {
-            return view('teams.edit', ['team' => $team])->with(['users' => $users]);
-        }
+        // if(Auth::user()->role == "Admin") {
+        //     return view('teams.edit', ['team' => $team])->with(['users' => $users]);
+        // }
 
-        foreach($team->users as $user) {
-            if($user->id == $userLogin && $user->pivot->status == "Disetujui" && $user->role != "Dosen" && $user->pivot->role == "Ketua") {
-                return view('teams.edit', ['team' => $team])->with(['users' => $users]);
-            }
-        }
-        return redirect()->back()->with('error', 'Anda bukan ketua tim ini!');
+        // foreach($team->users as $user) {
+        //     if($user->id == $userLogin && $user->pivot->status == "Disetujui" && $user->role != "Dosen" && $user->pivot->role == "Ketua") {
+        //         return view('teams.edit', ['team' => $team])->with(['users' => $users]);
+        //     }
+        // }
+        // return redirect()->back()->with('error', 'Anda bukan ketua tim ini!');
+
+        return view('teams.edit', ['team' => $team]);
     }
 
     public function update(Request $request, $teamId)

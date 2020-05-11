@@ -271,7 +271,7 @@
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group ">
-                        <label class="form-control-label" for="input-email">Foto Kartu Mahasiswa</label>
+                        <label class="form-control-label" for="input-email">Foto Kartu Tanda Mahasiswa</label>
                         <div class="ktmform">
                           @if (Auth::user()->ktm==null)
                             <input type="file" name="ktm" class="form-control {{ $errors->first('ktm') ? 'is-invalid' : ''}}" required>  
@@ -279,8 +279,8 @@
                             <h5>File harus berformat jpg atau png</h5>
                             <h5>Ukuran maksimal 4MB</h5>
                           @else
-                            <a class="btn btn-form btn-warning" id="downloadKTM" onclick="downloadKTM()">Download KTM</a>
-                            <a class="btn btn-form btn-success" id="reuploadKTM" onclick="reuploadKTM()">Upload Ulang KTM</a>
+                            <a class="btn btn-form btn-warning" id="downloadKTM" onclick="downloadKTM()"><i></i>  Download KTM</a>
+                            <a class="btn btn-form btn-success" id="reuploadKTM" onclick="reuploadKTM()">Upload Ulang</a>
                           @endif
                         </div>
                         <div class="invalid-feedback">
@@ -292,7 +292,7 @@
                 </div>
                 <hr class="my-4" />
                 <div class="pl-lg-4 float-right">
-                    <button type="submit" class="btn btn-primary">Update Profil</button>
+                    <button type="submit" id="updateProfile" class="btn btn-primary"><i></i>  Update Profil</button>
                 </div>
               </form>
             </div>
@@ -357,10 +357,17 @@
     $('#input-university-id').val(id) ;
   })
 
+  // download KTM 
   let downloadKTM = () => {
+    $('#downloadKTM i').addClass('fa fa-spinner loading');
     window.location = `{{url("/api/file/ktm/")."?filename=".Auth::user()->ktm}}`;
+    
+    setTimeout(function() {
+      $('#downloadKTM i').removeClass('fa fa-spinner loading');
+    }, 5800); 
   };
 
+  // reupload KTM
   let reuploadKTM = () => {
     $('.ktmform').html(`
       <div class="row">
@@ -379,10 +386,14 @@
 
   let batalReupload = () => {
     $('.ktmform').html(`
-      <a class="btn btn-form btn-primary" id="downloadKTM" onclick="downloadKTM()">Download KTM</a>
-      <a class="btn btn-form btn-primary" id="reuploadKTM" onclick="reuploadKTM()">Upload Ulang KTM</a>
+      <a class="btn btn-form btn-warning" id="downloadKTM" onclick="downloadKTM()"><i></i>  Download KTM</a>
+      <a class="btn btn-form btn-success" id="reuploadKTM" onclick="reuploadKTM()">Upload Ulang</a>
     `);
   };
+
+  $('#updateProfile').on('click',()=>{
+    $('#updateProfile i').addClass('fa fa-spinner loading');
+  })
 
 
 
