@@ -29,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = RouteServiceProvider::PROFILE;
 
     /**
      * Create a new controller instance.
@@ -53,7 +53,11 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+            'university_id' => ['required'],
+            'nim' => ['required'],
+            'prodi' => ['required'],
+            'phone' => ['required'],
+            ]);
     }
 
     /**
@@ -68,6 +72,11 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            '' => $data['name'],
+            'university_id' => $data['university_id'],
+            'nim' => $data['nim'],
+            'prodi' => $data['prodi'],
+            'phone' => $data['phone'],
         ]);
     }
 }

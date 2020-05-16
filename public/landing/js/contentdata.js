@@ -114,7 +114,7 @@ var carouselcontent = {
             'status' : `active`,
             'button' : `Daftar Sekarang`,
             'buttonAdd' : `<li><a class="main-btn rounded-two" href="/panduan">Lihat Panduan</a></li>`,
-            'link': `/teams`,
+            'link': `/register`,
             'image': `landing/images/slider/1.svg`
         },
         {
@@ -134,7 +134,7 @@ var carouselcontent = {
             'status' : ``,
             'button' : `Daftar Sekarang`,
             'buttonAdd' : ``,
-            'link': `/teams`,
+            'link': `/register`,
             'image': `landing/images/slider/3.png`
         }
         

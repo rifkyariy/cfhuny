@@ -103,7 +103,7 @@
                                 @endif
                             @else
                                 <li><a class="solid" href="{{ route('admin.index') }}">Unduh Panduan</a></li>
-                                <li><a class="solid" href="{{ url('/auth/google') }}">Masuk</a></li>
+                                <li><a class="solid" href="{{ route('login') }}">Masuk</a></li>
                             @endif
                             </ul>
                         </div>
