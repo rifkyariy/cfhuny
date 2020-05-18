@@ -3147,7 +3147,10 @@ p.form-message.success, p.form-message.error {
   font-size: 24px;
   color: #fff;
   border-radius: 50%; }
-.contact-info .single-contact-info .contact-info-content {}
+
+.contact-info .single-contact-info .contact-info-content {
+  
+}
   .contact-info .single-contact-info .contact-info-content .text {
     color: #121212; }
 .contact-info .single-contact-info.contact-color-1 .contact-info-icon i {
@@ -3320,6 +3323,19 @@ p.form-message.success, p.form-message.error {
   display: block;
   display: -webkit-box;
   max-width: 400px;
+  margin: 0 auto;
+  font-size: 26px;
+  line-height: 1.4;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ellipsis{
+  display: block;
+  display: -webkit-box;
+  max-width: 400px;
+  height: 60px;
   margin: 0 auto;
   font-size: 26px;
   line-height: 1.4;

@@ -31,3 +31,27 @@ Route::group(['prefix' => '/teams/{teamId}', 'middleware' => 'auth'], function()
 
 Route::get('auth/{provider}', 'Auth\AuthController@redirectToProvider');
 Route::get('auth/{provider}/callback', 'Auth\AuthController@handleProviderCallback');
+
+
+Route::get('/', function(){
+    $berita = \DB::table('berita')
+                ->get();
+    return view('index',['berita' => $berita]);
+});
+
+Route::get('/detailBerita/{id}', function($id){
+    $detailBerita = \DB::table('berita')
+                ->where('id',$id)
+                ->get();
+    return view('detailBerita',['detail' => $detailBerita]);
+});
+
+Route::get('/bidangPendidikan', function () {
+    return view('bidangPendidikan');
+});
+Route::get('/bidangKwu', function () {
+    return view('bidangKwu');
+});
+Route::get('/bidangSeni', function () {
+    return view('bidangSeni');
+});

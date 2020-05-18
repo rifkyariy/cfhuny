@@ -51,3 +51,5 @@ Route::get('/file/ktm', function(Request $request){
         ->header('Content-Disposition', "attachment; filename=$filename");
 });
 
+
+
