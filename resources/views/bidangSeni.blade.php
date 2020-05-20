@@ -89,6 +89,7 @@
                                 <li class="nav-item"><a class="page-scroll" href="/#kategorilomba">Kategori Lomba</a>
                                 </li>
                                 <li class="nav-item"><a class="page-scroll" href="/#berita">Berita</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="/#kodePT">Kode PT</a>
                                 <li class="nav-item"><a class="page-scroll" href="/#faq">FAQ</a></li>
                             </ul>
                         </div>
@@ -139,8 +140,7 @@
                     <h4 class="ml-30">Ketentuan Khusus </h4><br>
                     <p style="line-height: 200%" class="ml-30">Video diunggah melalui Youtube dengan format judul video
                         “Virtual Choir Competition – Paduan
-                        Suara/Vokal Grup - Kode PT - Nama Tim” (Kode PT bisa dilihat di laman <a
-                            href="https://forlap.ristekdikti.go.id/">https://forlap.ristekdikti.go.id/</a>), kemudian
+                        Suara/Vokal Grup - Kode PT - Nama Tim” (Kode PT bisa dilihat di laman <a href="/#kodePT">Kode PT</a>), kemudian
                         mengisi tautan/ link Youtube pada
                         system <a href="https://cartesion.uny.ac.id">cartesion.uny.ac.id</a> </p><br>
                     <h5 class="ml-30">a. Paduan Suara</h5>
@@ -201,7 +201,7 @@
                         <h4 class="ml-30">Ketentuan Khusus </h4><br>
                         <p style="line-height: 200%" class="ml-30">Video diunggah melalui Youtube dengan format judul
                             video “Virtual Music Competition – Band/Akustik - Kode PT - Nama Tim” (Kode PT bisa dilihat
-                            di laman <a href="https://forlap.ristekdikti.go.id/">https://forlap.ristekdikti.go.id/</a>),
+                            di laman <a href="/#kodePT">Kode PT</a>),
                             kemudian
                             mengisi tautan/ link Youtube pada
                             system <a href="https://cartesion.uny.ac.id">cartesion.uny.ac.id</a>

@@ -89,6 +89,7 @@
                                 <li class="nav-item"><a class="page-scroll" href="/#kategorilomba">Kategori Lomba</a>
                                 </li>
                                 <li class="nav-item"><a class="page-scroll" href="/#berita">Berita</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="/#kodePT">Kode PT</a>
                                 <li class="nav-item"><a class="page-scroll" href="/#faq">FAQ</a></li>
                             </ul>
                         </div>
@@ -153,15 +154,14 @@
                         <li>Membuat proposal strategi pengembangan UMKM dengan tema: “Strategi jitu UMKM menghadapi
                             pandemi Covid-19” dan mengunggah pada sistem <a
                                 href="https://cartesion.uny.ac.id">cartesion.uny.ac.id</a> dengan format nama file “SBSP
-                            2020 - Judul - Kode PT - Nama Tim – Proposal.pdf” (Kode PT bisa dilihat di laman <a
-                                href="https://forlap.ristekdikti.go.id/ ">https://forlap.ristekdikti.go.id/ </a> )</li>
+                            2020 - Judul - Kode PT - Nama Tim – Proposal.pdf” (Kode PT bisa dilihat di laman <a href="/#kodePT">Kode PT</a> )</li>
                         <li>Seluruh proposal strategi bisnis yang diterima oleh panitia akan diseleksi berdasarkan
                             kriteria penilaian dan dipilih enam (6) tim terbaik untuk menjadi finalis, yang nantinya
                             akan mempresentasikan rancang bisnisnya di hadapan dewan juri melalui video conference. Tim
                             yang lolos seleksi tahap pertama diwajibkan mengirimkan file presentasi kepada panitia
                             sesuai waktu yang telah ditentukan dan tidak diperkenankan untuk diubah, dengan format nama
                             file “SBSP 2020 - Judul - Kode PT - Nama Tim – Presentasi.pdf” (Kode PT bisa dilihat di
-                            laman <a href="https://forlap.ristekdikti.go.id/ ">https://forlap.ristekdikti.go.id/ </a> )
+                            laman <a href="/#kodePT">Kode PT</a> )
                         </li>
                         <li>Presentasi rancangan/strategi bisnis guna menyelesaikan permasalahan UMKM dilakukan maksimal
                             10 menit dan dilanjutkan tanya jawab 15 menit. </li>

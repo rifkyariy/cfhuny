@@ -88,6 +88,7 @@
                                 <li class="nav-item"><a class="page-scroll" href="/#kategorilomba">Kategori Lomba</a>
                                 </li>
                                 <li class="nav-item"><a class="page-scroll" href="/#berita">Berita</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="/#kodePT">Kode PT</a>
                                 <li class="nav-item"><a class="page-scroll" href="/#faq">FAQ</a></li>
                             </ul>
                         </div>

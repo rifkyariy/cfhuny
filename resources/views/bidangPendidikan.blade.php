@@ -89,6 +89,7 @@
                                 <li class="nav-item"><a class="page-scroll" href="/#kategorilomba">Kategori Lomba</a>
                                 </li>
                                 <li class="nav-item"><a class="page-scroll" href="/#berita">Berita</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="/#kodePT">Kode PT</a></li>
                                 <li class="nav-item"><a class="page-scroll" href="/#faq">FAQ</a></li>
                             </ul>
                         </div>
@@ -148,7 +149,7 @@
                         <li>Setiap peserta diperbolehkan mengikutsertakan maksimal 1 (satu) karya</li>
                         <li>Proposal diunggah melalui sistem cartesion.uny.ac.id dalam bentuk PDF maksimal 8 MB dengan
                             format nama file “Lomba Inovasi Online Pendidikan 2020 - Multimedia - Kode PT - Nama Tim –
-                            Proposal.pdf” (Kode PT bisa dilihat di laman <a href="https://forlap.ristekdikti.go.id/ ">https://forlap.ristekdikti.go.id/ </a>)</li>
+                            Proposal.pdf” (Kode PT bisa dilihat di laman <a href="/#kodePT">Kode PT</a>)</li>
                         <li>Menandatangani surat pernyataan bermeterai bahwa karya yang dibuat asli (bukan plagiat) dan
                             belum pernah memperoleh penghargaan/juara pada lomba serupa/sejenis. (tanda tangan ketua
                             tim)</li>
@@ -173,7 +174,7 @@
                             tim), format surat dapat diunduh di laman <a href="https://cartesion.uny.ac.id">cartesion.uny.ac.id</a></li>
                         <li>Proposal diunggah melalui sistem <a href="https://cartesion.uny.ac.id">cartesion.uny.ac.id</a> dalam bentuk PDF maksimal 8 MB
                             dengan format nama file “Lomba Inovasi Online Pendidikan 2020 - Gagasan - Kode PT - Nama Tim
-                            – Proposal.pdf” (Kode PT bisa dilihat di laman <a href="https://forlap.ristekdikti.go.id/ ">https://forlap.ristekdikti.go.id/ </a>)</li>
+                            – Proposal.pdf” (Kode PT bisa dilihat di laman <a href="/#kodePT">Kode PT</a>)</li>
                         <li>Pengiriman proposal disertai dengan Pernyataan bahwa karya yang dilombakan belum pernah
                             diikutsertakan pada kompetisi lain (tanda tangan ketua tim)</li>
                     </ol>
