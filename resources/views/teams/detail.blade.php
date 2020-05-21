@@ -9,8 +9,7 @@
       <br> <br>
       <div class="navbar-brand">
         <div class="sidenav-header  align-items-center">
-            {{-- <img src="{{asset('img/brand/logo-infinite.png')}}" class="navbar-brand-img" alt="Logo Infinite"> --}}
-            Distancing Fest.
+          <img src="{{asset('img/brand/logo-black.png')}}" class="navbar-brand-img" alt="Logo Infinite">
         </div>
       </div>
       <div class="navbar-inner">
@@ -176,7 +175,12 @@
               @if(Auth::user()->role == "Mahasiswa")
                 <a href="{{ route('teams.edit', [$team->id])}}" class="btn-cl-white btn btn-primary">Edit Tim</a> 
                 <a id="hapusTim" onclick="removeTeam('{{ route('teams.destroy', [$team->id])}}')" class="btn-cl-white btn btn-danger">Hapus Tim</a> 
-                <a href="{{ route('teams.edit', [$team->id])}}" class="btn-cl-white btn btn-warning">Upload Submission</a> 
+                {{-- <a href="{{ route('teams.edit', [$team->id])}}" class="btn-cl-white btn btn-success">Download Sertifikat</a>  --}}
+                @if ($subs!=null)
+                  <a href="{{ route('submissions.edit', [$subs->id,$team->id]) }}" class="btn btn-warning">Submission</a>  
+                @else
+                  <a href="{{ route('submissions.create', [$team->id]) }}" class="btn btn-warning">Submission</a>  
+                @endif
               @endif
               </nav>
               <br>
@@ -220,7 +224,7 @@
                     @endif
                       <td>
                         <a onclick="removeMember('{{ route('teams.removemember', [$team->id,$member->id])}}')" class="btn-cl-white remove-member btn btn-danger btn-sm {{$member->user_id==Auth::user()->id?'disabled':''}}" {{$member->user_id==Auth::user()->id?'disabled':''}}>Hapus</a> 
-                        <a href="{{ route('teams.edit', [$team->id])}}" class="btn-cl-white btn btn-success btn-sm ">Download Sertifikat</a> 
+                        {{-- <a href="{{ route('teams.edit', [$team->id])}}" class="btn-cl-white btn btn-success btn-sm ">Download Sertifikat</a>  --}}
                       </td>
                   </tr>
                   @endforeach
@@ -262,7 +266,9 @@
         cancelButtonColor: '#f5365c',
         confirmButtonText: 'Ya, Hapus Member'
       }).then((result) => {
+        if (result.value) {
           window.location = url;
+        }
       })
     }
 
@@ -276,7 +282,7 @@
         cancelButtonColor: '#f5365c',
         confirmButtonText: 'Ya, Hapus Tim'
       }).then((result) => {
-        console.log(result);
+        console.log(result.value);
         if (result.value) {
           $.ajax({
               url: url,

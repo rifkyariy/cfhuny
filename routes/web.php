@@ -1,10 +1,29 @@
 <?php
 
-Auth::routes(['verify' => true]);
+Route::get('/', function(){
+    $berita = \DB::table('berita')
+                ->get();
+    return view('index',['berita' => $berita]);
+})->name('landingpage');
 
-Route::get('/', function () {
-    return view('index');
+Route::get('/detailBerita/{id}', function($id){
+    $detailBerita = \DB::table('berita')
+                ->where('id',$id)
+                ->get();
+    return view('detailBerita',['detail' => $detailBerita]);
 });
+
+Route::get('/bidangPendidikan', function () {
+    return view('bidangPendidikan');
+});
+Route::get('/bidangKwu', function () {
+    return view('bidangKwu');
+});
+Route::get('/bidangSeni', function () {
+    return view('bidangSeni');
+});
+
+Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home.index')->middleware('auth');
 
@@ -28,6 +47,8 @@ Route::put('/teams/reject/{teamId}', 'TeamsController@reject')->name('teams.reje
 Route::group(['prefix' => '/teams/{teamId}', 'middleware' => 'auth'], function() {
     Route::get('/proposals/download/{proposalId}', 'ProposalController@download')->name('proposals.download')->middleware('auth');
     Route::resource('proposals', 'ProposalController')->middleware('auth');
+
+    Route::resource('submissions', 'SubmissionController')->middleware('auth');
 });
 
 Route::get('auth/{provider}', 'Auth\AuthController@redirectToProvider');

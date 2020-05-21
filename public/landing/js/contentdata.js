@@ -109,23 +109,23 @@ var carouselcontent = {
     'data' : [
         {
             'subtitle' : `Selamat Datang Di`,
-            'title' : `Website Resmi UNY Distancing Festival `,
+            'title' : `Website Resmi UNY Cartesion `,
             'desc' : `Submit ide kreatifmu dan dapatkan bimbingan eksklusif.`,
             'status' : `active`,
             'button' : `Daftar Sekarang`,
             'buttonAdd' : `<li><a class="main-btn rounded-two" href="/panduan">Lihat Panduan</a></li>`,
-            'link': `/register`,
-            'image': `landing/images/slider/1.svg`
+            'link': `/teams`,
+            'image': `landing/images/slider/wfh2.svg`
         },
         {
             'subtitle' : `Agenda dan Timeline `,
-            'title' : `Timeline UNY Distancing Festival`,
+            'title' : `Timeline UNY Cartesion`,
             'desc' : `Ingin ikut tapi bingung alurnya ? Yuk simak timelinenya.`,
             'status' : ``,
             'button' : `Lihat Timeline`,
             'buttonAdd' : ``,
             'link': `/timeline`,
-            'image': `landing/images/slider/2.png`
+            'image': `landing/images/slider/timeline.svg`
         },
         {
             'subtitle' : `Pengumuman `,
@@ -134,16 +134,16 @@ var carouselcontent = {
             'status' : ``,
             'button' : `Daftar Sekarang`,
             'buttonAdd' : ``,
-            'link': `/register`,
-            'image': `landing/images/slider/3.png`
+            'link': `/teams`,
+            'image': `landing/images/slider/wfh.svg`
         }
         
     ]
 
 }
 
-// tentang gemastik
-var tentanggemastik = {
+// tentang unyCartesion
+var tentangUnyCartesion = {
     'html' : (data) => {
         return `
         <h6 class="sub-title">${data.subtitle}</h6>
@@ -162,24 +162,24 @@ var tentanggemastik = {
     'data' : [
         {
             'subtitle' : `Apa itu `,
-            'title' : `Gemastik`,
-            'desc' : `<b>GEMASTIK</b> (Pagelaran Mahasiswa Nasional Bidang Tekonologi Informasi dan Komunikasi), merupakan program Direktorat Kemahasiswaan, Direktorat Jenderal Pembelajaran dan Kemahasiswaan Kementerian Riset, Teknologi dan Pendidikan Tinggi. <br/><br/>
-            Program ini ditujukan untuk meningkatkan kompetensi mahasiswa Indonesia, sehingga mampu mengambil peran sebagai agen perubahan dalam memajukan TIK dan pemanfaatannya, baik ketika masih dalam masa studi maupun kelak sesudah lulus studi. `
+            'title' : `UNY National Cartesion`,
+            'desc' : `<b>UNY National Cartesion</b> adalah Kompetensi Nasional yang diselenggarakan secara online oleh Universitas Negeri Yogyakarta <br/><br/>
+            Program ini bertujuan untuk menjaring ide atau gagasan cemerlang serta memfasilitasi mahasiswa untuk berkarya dan mengembangkan kreativitasnya baik dalam bidang pendidikan, kewirausahaan maupun seni. 
+            `
         }
     ]
 
 }
 
 // bidang lomba
-var bidanglombacontent = {
+var kategorilombacontent = {
     'html' : (data) => {return `
                 <div class="col-lg-4 col-md-7 col-sm-9">
                     <div class="single-features mt-40">
                         <div class="features-title-icon d-flex justify-content-between">
                             <h6 class="features-title"><a href="#">${data.title}</a></h6>
                             <div class="features-icon">
-                                <i class="lni ${data.icon}"></i>
-                                <img class="shape" src="landing/images/f-shape-1.svg" alt="Shape">
+                                <img src="${data.image}" alt="${data.title}" width="100%" height="120px">
                             </div>
                         </div>
                         <div class="features-content multiline-ellipsis">
@@ -188,52 +188,34 @@ var bidanglombacontent = {
                             </p>
                         </div>
                         <div class="features-content">
-                            <a class="features-btn" href="${data.link}">LEARN MORE</a>
+                            <a class="features-btn" href="${data.link}">Selengkapnya</a>
                         </div>
                     </div>
                 </div>
                 `},
     'data' : [
         {
-            'title' : 'Keamanan Siber',
-            'icon' : 'lni-shield',
-            'desc': `Kompetisi kategori ini bertujuan untuk menguji kemampuan peserta dalam menghadapi kasus keamanan sistem komputer dan jaringan yang telah disiapkan,`,
-            'link': '/lombactf' 
+            'title' : 'KATEGORI PENDIDIKAN',
+            'image' : '/landing/images/icon/edu.svg',
+            'desc': `Lomba ini bertujuan untuk menyalurkan ide dan kreatifitas mahasiswa dalam mengembangkan inovasi multimedia pembelajaran dan inovasi pembelajaran`,
+            'link': '/bidangPendidikan' 
         },
         {
-            'title' : 'Pemrograman Kompetitif',
-            'icon' : 'lni-code',
-            'desc': `Lomba pemrograman menguji kemampuan dan nalar dari setiap peserta dalam menyelesaikan program komputer untuk memecahkan permasalahan yang diberikan. Setiap program yang dibuat selain dapat menjawab dengan tepat kasus permasalahan yang diberikan, juga harus dapat dijalankan pada setiap kasus dalam waktu yang amat terbatas. Sehingga, selain peserta diadu dalam kecepatan penulisan program, peserta juga dituntut menemukan/ menggunakan algoritma (dan struktur data) yang tepat dan efisien. Bahasa pemrograman yang digunakan antara lain: C, C++, dan Java.`,
-            'link': '/lombacp' 
+            'title' : 'KATEGORI KEWIRAUSAHAAN',
+            'image' : '/landing/images/icon/bus.svg',
+            'desc': `Lomba ini bertujuan untuk memberikan kontribusi nyata dalam membantu permasalahan UMKM di Indonesia sebagai dampak pandemi Covid-19`,
+            'link': '/bidangKwu' 
         },
         {
-            'title' : 'Penambangan Data',
-            'icon' : 'lni-database',
-            'desc': `Penambangan Data yang semakin banyak menarik perhatian baik di kalangan industri maupun akademik dunia dewasa ini, terutama dengan penggunaan deep learning yang merupakan suatu algoritma mutakhir. Keunggulan deep learning dibandingkan dengan algoritma konvensional adalah kemampuan untuk melatih jutaan bahkan milyaran parameter pembelajaran yang tersusun secara hierarkis multi lapis. Selain berkat terobosan algoritma, deep learning juga telah dimungkinkan berkat tersedianya stream data atau big data yang diperlukan untuk melatih parameter dalam jumlah raksasa tersebut. Dengan adanya konvergensi antara deep learning dan big data telah terbukti mampu memberikan insight atau performa yang sama dengan bahkan melampaui human level performance.
-            Para peserta lomba diharapkan mampu melakukan proses Penambangan Data terhadap big data yang tersedia secara publik di web serta sudah terverifikasi validitasnya. Langkah peserta selanjutnya adalah memvisualisasikan hasil proses Penambangan Data tersebut sehingga berguna bagi masyarakat luas.`,
-            'link': '/lombadatamining   ' 
+            'title' : 'KATEGORI SENI',
+            'image' : '/landing/images/icon/art.svg',
+            'desc': `Lomba ini bertujuan untuk mengembangangkan potensi mahasiswa di bidang seni terutama pada bakat - bakat paduan suara dan vokal grup, sastra, dan musik`,
+            'link': '/bidangSeni   ' 
         },
-        {
-            'title' : 'Pengembangan Bisnis TIK',
-            'icon' : 'lni-investment',
-            'desc': `Kategori lomba ini adalah kompetisi pengembangan model bisnis dengan produk TIK. Lomba ini memberikan kesempatan kepada peserta yang memiliki ide bisnis, start up dan pengembangan usaha yang berorientasi pada produk TIK, baik berupa jasa dan produk. Lomba ini akan menyeleksi ide pengembangan bisnis dalam bentuk ringkasan eksekutif pada penyisihan tahap pertama, kemudian business plan pada penyisihan tahap kedua, dan kompetisi produk disertai dengan proyeksi bisnisnya.`,
-            'link': '/lombabussines' 
-        },
-        {
-            'title' : 'Kota cerdas',
-            'icon' : 'lni-apartment',
-            'desc': `Kota Cerdas atau smart city adalah suatu konsep mengenai pemanfaatan data untuk mengelola kota/melayani masyarakat. Inovasi kota cerdas dirancang guna melayani dan membantu berbagai kegiatan masyarakat, terutama dalam mengelola sumber daya secara efisien dan memberikan kemudahan akses informasi kepada masyarakat hingga untuk mengantisipasi kejadian yang tidak terduga.
-            Dengan Smart City, berbagai macam data dan informasi dapat dikumpulkan dari sensor yang terpasang di setiap sudut kota, dianalisis oleh aplikasi cerdas, selanjutnya disajikan sesuai dengan kebutuhan pengguna melalui aplikasi yang dapat diakses oleh berbagai jenis gadget. Melalui gadget-nya, secara interaktif pengguna juga dapat menjadi sumber data, mereka mengirim informasi ke pusat data untuk dikonsumsi oleh pengguna yang lain.`,
-            'link': '/lombasmartcity' 
-        },
-        {
-            'title' : 'Karya Tulis Ilmiah TIK',
-            'icon' : 'lni-write',
-            'desc': `Lomba Karya Tulis Ilmiah mendorong peserta untuk menumbuhkembangkan sebuah karya tulis mahasiswa dalam bentuk penuangan gagasan atau ide kreatif yang bersifat visioner dan implementatif untuk mencari solusi atas permasalahan bangsa yang siap terbit dengan mengikuti kaidah penulisan ilmiah. Diharapkan peserta yang mengikuti cabang lomba ini mampu berinovasi dan menyajikan karya tulis ilmiah yang memberikan solusi dari segi TIK untuk k.........`,
-            'link': '/lombaktitik' 
-        }
+      
     ]
 }
+//berita
 
 // frequently asked questions
 // faq title
@@ -277,37 +259,25 @@ var faqcontent = {
     },
     'data' : [
             {
-                'title' : 'Gemastik itu apa kak ?',
-                'answer' : '<b>Gemastik</b> adalah Pagelaran Mahasiswa Nasional Bidang Teknologi Informasi dan Komunikasi. Sederhananya, Gemastik itu seperti Pimnas khusus bidang TIK '
+                'title' : 'UNY National Cartesion itu apa kak ?',
+                'answer' : '<b>UNY National Cartesion</b> adalah Kompetensi Nasional yang diselenggarakan secara online oleh Universitas Negeri Yogyakarta'
             },
             {
-                'title' : 'Kalau bukan mahasiswa TI boleh ikut nggak kak?',
-                'answer' : '<b>Boleh banget</b>, walaupun kompetisi ini memiliki fokus bidang TIK tapi bisa diikuti sama mahasiswa jurusan apa saja'
-            },
-            {
-                'title' : 'Harus bisa coding ya kak?',
-                'answer' : '<b>Nggak sih</b> , untuk bidang lomba tertentu seperti Animasi, Desain Pengalaman Pengguna, (Bisnis TIK?) dan Karya Tulis Ilmiah TIK kamu bisa ikut meskipun nggak bisa ngoding sekalipun'
+                'title' : 'Pendaftaran Kapan ya kak?',
+                'answer' : 'Bisa dicek di timeline pendaftaran'
             },
             {
                 'title' : 'Syarat untuk daftar apa aja kak?',
-                'answer' : 'Kuy kepoin syarat pendaftaran di link berikut <a href="/syaratgemastik"><b>Syarat Ketentuan</b> </a>'
+                'answer' : 'Kuy kepoin syarat pendaftaran di link berikut <a href="/syaratunycartesion"><b>Syarat Ketentuan</b> </a>'
             },
             {
-                'title' : 'Bagaimana tahap pendaftaran gemastik?',
-                'answer' : 'Coming soon yeaa'
-            },        
-            {
-                'title' : 'Apa benefit pendaftaran internal UNY?',
-                'answer' : 'Benefit ikut pendaftaran internal UNY, kamu bisa dapet review, kritik, saran dan arahan dari mastah, opo yo kata selain mastah'
+                'title' : 'Bagaimana tahap pendaftaran',
+                'answer' : 'Bisa dicek di di link panduan berikut <a href="/panduan"><b>Panduan</b> </a> '
             },
             {
-                'title' : 'Berapa orang maksimal satu tim?',
-                'answer' : 'Satu tim maksimal terdiri dari 3 mahasiswa dari perguruan tinggi yang sama ya'
-            },
-            {
-                'title' : 'Bagaimana mekanisme review internal ?',
-                'answer' : 'Bisa kepoin alur atau timelinenya disini <a href="/timeline"><b>Timeline Internal Gemastik</b> </a>'
-            }
+                'title' : 'Ini nanti semua lombanya online kak? ',
+                'answer' : 'Iyap lombanya semua online'
+            },       
         ]
 }
 
@@ -354,8 +324,8 @@ let initFaq = (pageSize) => {
 }
 
 // init
-setContent(".bidang-lomba-content",bidanglombacontent);
-setContent(".tentang-gemastik-content",tentanggemastik);
+setContent(".kategori-lomba-content",kategorilombacontent);
+setContent(".tentang-UnyCartesion-content",tentangUnyCartesion);
 setContent(".carousel-inner",carouselcontent);
 initFaq(4);
 
@@ -369,3 +339,47 @@ window.addEventListener('resize', () => {
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 });
+
+$(document).ready(() => {
+    $('#input-university').select2({
+        ajax: {
+          url: '/api/sel2/perguruantinggi',
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            var query = {
+              search: params.term
+            }
+  
+            // Query parameters will be ?search=[term]&page=[page]
+            return query;
+          },
+          processResults: function (data) {
+              console.log(data);
+              
+            return {
+              results: $.map(data, function(obj) {
+                return {
+                  id: obj.id,
+                  text: obj.text
+                };
+              })
+            };
+          },
+          cache: true
+        },
+        placeholder: 'Pilih Perguruan Tinggi'
+      });
+});
+
+$('#input-university').on('change',() => {
+    let name = " ";
+    let id = $('#input-university :selected').val();
+    name = $('#input-university :selected').text();
+    $('.info').show();
+    $('.info .result').html(`
+        <h6 class="result-title">Hasil Pencarian</h6>
+        <h4 class="univ_name">${name}</h4>
+        <h4 class="univ_name">Kode Perguruan Tinggi : ${id}</h4>
+    `)
+})

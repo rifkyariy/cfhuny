@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Carbon\Carbon;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,7 @@ class AuthController extends Controller
         $user = Socialite::driver($provider)->user();
         $authUser = $this->findOrCreateUser($user, $provider);
         Auth::login($authUser, true);
-        return redirect()->route('home.index');
+        return redirect()->route('teams.index');
     }
 
     /**
@@ -51,7 +52,7 @@ class AuthController extends Controller
                 'provider' => $provider,
                 'provider_id' => $user->id,
                 'avatar' => $user->avatar,
-                'is_active' => '1'
+                'email_verified_at' => Carbon::now()->timestamp
             ]); 
             return $data;
         }

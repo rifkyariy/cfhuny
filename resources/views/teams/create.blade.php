@@ -8,8 +8,7 @@
       <br> <br>
       <div class="navbar-brand">
         <div class="sidenav-header  align-items-center">
-            {{-- <img src="{{asset('img/brand/logo-infinite.png')}}" class="navbar-brand-img" alt="Logo Infinite"> --}}
-            Distancing Fest.
+          <img src="{{asset('img/brand/logo-black.png')}}" class="navbar-brand-img" alt="Logo Infinite">
         </div>
       </div>
       <div class="navbar-inner">
@@ -124,7 +123,13 @@
                 </ol>
               </nav>
             </div>
-          </div>          
+          </div>     
+          
+          @if($errors->any())
+            <div class="alert alert-warning">
+                {{ implode(' ,', $errors->all(':message')) }}
+            </div>
+          @endif     
           <!-- Card stats -->
         </div>
       </div>
@@ -225,9 +230,17 @@
                 <div class="pl-lg-4 anggotatim">
                   <div class="row">
                     <div class="col-lg-12">
+                      <label id="defaultState" for="">Masukkan jumlah anggota tim anda</label>
+                      <div class="row">
+                        <div class="col-md-2">
+                          <input id="jumlah_anggota" name="jumlah_anggota" class="form-control" name="cabang_lomba" type="number" value="0" min="0" max="45">
+                        </div>
+                        <div class="col-md-3">
+                          <a class="btn-cl-white btn btn-form btn-success" id="tambahAnggota" onclick="tambahAnggota()">Tambah Anggota</a><br><br>
+                        </div>
+                      </div>
                       <div class="anggota-con">
                       </div>
-                      <a class="btn-cl-white btn btn-form btn-success" id="tambahAnggota" onclick="tambahAnggota()">Tambah Anggota</a><br><br>
                     </div>
                   </div>           
                 </div>
@@ -238,7 +251,6 @@
                 </label>
                 <label class="cblabel" for="acceptRequirement">Saya telah membaca segala persyaratan yang ada di dalam <a href="{{url('/panduan')}}">Panduan</a> dan menyetujuinya</label>
                 
-                <input id="jumlah_anggota" name="jumlah_anggota" type="hidden">
                 <hr class="my-4" />
                 <div class="pl-lg-4">
                     <button type="submit" id="buatTim" class="btn btn-primary" disabled="true">Buat Tim</button>
@@ -264,6 +276,9 @@
 
 @section('localjs')
   <script>
+    let anggota = 0;
+    let maxanggota = 0;
+
     $(document).ready(function() {
       // initiate select2
       $('#input-cabang-lomba').select2({
@@ -299,126 +314,195 @@
     $('#input-cabang-lomba').on('change',() => {
       let id = $('#input-cabang-lomba :selected').val();
       $('#cabang_lomba').val(id) ;
+      
+      $.get( 
+      '{{url("/api/data/cabanglomba")}}',
+      {
+        'id' : id
+      }, 
+      function( data ) {
+        setAnggota(data.anggota);
+      });
+
+      
     })
 
-    let anggota = 0;
-    let tambahAnggota = () => {
-      if (anggota<=2) {
-        $('.anggota-con').append(` 
-        <div class="form-group fg-anggota" id="anggota${anggota+1}">
-          <label class="anggota-title form-control-label {{ $errors->first('anggota${[anggota]}') ? 'is-invalid' : ''}}" for="input-address">Anggota  ${anggota+1}</label> 
-          <a ><span onclick="removeMember(${anggota+1})" class=" ml-2 badge badge-pill badge-danger my-1">Hapus Anggota</span></a>
-          <br>
-          <h6 class="heading-small text-muted mb-4">Informasi Anggota</h6>
-          <div class="pl-lg-4">
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="form-group">
-                  <label class="form-control-label" for="input-username">Nama Lengkap</label>
-                  <input type="text" name="anggota_name[]" id="input-username" class="form-control {{ $errors->first('anggota_name${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Nama Lengkap"  required>
-                  <div class="invalid-feedback">
-                      {{ $errors->first('name') }}
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="form-group">
-                  <label class="form-control-label" for="input-email">Alamat Email</label>
-                  <input type="email" name="anggota_email[]" id="input-email" placeholder="Alamat Email" class="form-control {{ $errors->first('anggota_email${[anggota]}') ? 'is-invalid' : ''}}"  >
-                  </div>
-                </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="form-control-label" for="input-university">Universitas</label>
-                    <input id="input-university-id" name="anggota_university_id[]" type="hidden" value="{{ Auth::user()->university_id }}">
-                    <select class="form-control input-university" id="input-university">
-                      @if ($pt!=null)
-                        <option value="{{$pt->id}}">{{$pt->name}}</option>
-                      @endif
-                    </select>
-                    <div class="invalid-feedback">
-                      {{ $errors->first('anggota_university_id${[anggota]}') }}
-                    </div>
-                  </div>
-              </div>
-              <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="form-control-label" for="input-address">Program Studi</label>
-                    <input id="input-address" name="anggota_prodi[]" class="form-control {{ $errors->first('anggota_prodi${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Program Studi" type="text" value="" required>
-                    <div class="invalid-feedback">
-                        {{ $errors->first('anggota_prodi${[anggota]}') }}
-                    </div>
-                  </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="form-control-label" for="input-address">NIM</label>
-                    <input id="input-address" name="anggota_nim[]" class="form-control {{ $errors->first('anggota_nim${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Nomor Induk Mahasiswa" type="text" value="" required>
-                    <div class="invalid-feedback">
-                      {{ $errors->first('anggota_nim${[anggota]}') }}
-                    </div>
-                  </div>
-              </div>
-              <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="form-control-label" for="input-username">No Hp</label>
-                    <input type="text" name="anggota_phone[]" id="input-username" class="form-control {{ $errors->first('anggota_phone${[anggota]}') ? 'is-invalid' : ''}}" value="" placeholder="No Hp" required>
-                    <div class="invalid-feedback">
-                        {{ $errors->first('anggota_phone${[anggota]}') }}
-                    </div>
-                  </div>
-              </div>
-            </div>
-          </div>
-          <hr class="my-4" />
-          <!-- Address -->
-          <h6 class="heading-small text-muted mb-4">Upload Berkas Persyaratan</h6>
-          <div class="pl-lg-4">
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="form-group ">
-                  <label class="form-control-label" for="input-email">Foto Kartu Tanda Mahasiswa</label>
-                  <div class="ktmform">
-                      <input type="file" name="anggota_ktm[]" class="form-control {{ $errors->first('anggota_ktm${[anggota]}') ? 'is-invalid' : ''}}" required>  
-                      <br>
-                      <h5>File harus berformat jpg atau png</h5>
-                      <h5>Ukuran maksimal 4MB</h5>
-                  </div>
-                  <div class="invalid-feedback">
-                      {{ $errors->first('anggota_ktm${[anggota]}') }}
-                  </div>
-                </div>
-              </div>
-            </div>             
-          </div>
-          <div class="invalid-feedback">
-            {{ $errors->first('anggota${[anggota]}') }}
-          </div>
-        </div>
-        `);
+    let setAnggota = (newData) =>{
+      maxanggota = newData;
 
-        anggota++;
-        $('#jumlah_anggota').val(anggota);
-
-      }
-      
-      if (anggota == 2){
+      if(maxanggota==1){
+        $('#defaultState').html(`Lomba ini merupakan lomba individu.`);
+        $('#jumlah_anggota').hide();
         $('#tambahAnggota').hide();
+      }else{
+        
+        $('#defaultState').html(`Masukkan jumlah anggota tim anda`);
+        $('#jumlah_anggota').show();
+        $('#tambahAnggota').show();
+      }
+    }
+
+    let tambahAnggota = () => {
+      let anggotaIn = $('#jumlah_anggota').val();
+      $('.anggota-con').html(``);
+      if(anggotaIn <=6){
+        for (let anggota = 0; anggota < anggotaIn; anggota++) {
+          $('.anggota-con').append(` 
+          <div class="form-group fg-anggota" id="anggota${anggota+1}">
+            <label class="anggota-title form-control-label {{ $errors->first('anggota${[anggota]}') ? 'is-invalid' : ''}}" for="input-address">Anggota  ${anggota+1}</label> 
+            <a >
+              <span 
+              onclick="removeMember('',${anggota+1})" 
+              class=" ml-2 badge badge-pill badge-danger my-1">
+                Hapus Anggota
+              </span>
+            </a>
+            <br>
+            <h6 class="heading-small text-muted mb-4">Informasi Anggota</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-username">Nama Lengkap</label>
+                    <input type="text" name="anggota_name[]" id="input-username" class="form-control {{ $errors->first('anggota_name${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Nama Lengkap"  required>
+                    <div class="invalid-feedback">
+                        {{ $errors->first('name') }}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-email">Alamat Email</label>
+                    <input type="email" name="anggota_email[]" id="input-email" placeholder="Alamat Email" class="form-control {{ $errors->first('anggota_email${[anggota]}') ? 'is-invalid' : ''}}"  >
+                    </div>
+                  </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-university">Universitas</label>
+                      <input id="input-university-id" name="anggota_university_id[]" type="hidden" value="{{ Auth::user()->university_id }}">
+                      <select class="form-control input-university" id="input-university">
+                        @if ($pt!=null)
+                          <option value="{{$pt->id}}">{{$pt->name}}</option>
+                        @endif
+                      </select>
+                      <div class="invalid-feedback">
+                        {{ $errors->first('anggota_university_id${[anggota]}') }}
+                      </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-address">Program Studi</label>
+                      <input id="input-address" name="anggota_prodi[]" class="form-control {{ $errors->first('anggota_prodi${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Program Studi" type="text" value="" required>
+                      <div class="invalid-feedback">
+                          {{ $errors->first('anggota_prodi${[anggota]}') }}
+                      </div>
+                    </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-address">NIM</label>
+                      <input id="input-address" name="anggota_nim[]" class="form-control {{ $errors->first('anggota_nim${[anggota]}') ? 'is-invalid' : ''}}" placeholder="Nomor Induk Mahasiswa" type="text" value="" required>
+                      <div class="invalid-feedback">
+                        {{ $errors->first('anggota_nim${[anggota]}') }}
+                      </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-username">No Hp</label>
+                      <input type="text" name="anggota_phone[]" id="input-username" class="form-control {{ $errors->first('anggota_phone${[anggota]}') ? 'is-invalid' : ''}}" value="" placeholder="No Hp" required>
+                      <div class="invalid-feedback">
+                          {{ $errors->first('anggota_phone${[anggota]}') }}
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <hr class="my-4" />
+            <!-- Address -->
+            <h6 class="heading-small text-muted mb-4">Upload Berkas Persyaratan</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group ">
+                    <label class="form-control-label" for="input-email">Foto Kartu Tanda Mahasiswa</label>
+                    <div class="ktmform">
+                        <input type="file" name="anggota_ktm[]" class="form-control {{ $errors->first('anggota_ktm${[anggota]}') ? 'is-invalid' : ''}}" required>  
+                        <br>
+                        <h5>File harus berformat jpg atau png</h5>
+                        <h5>Ukuran maksimal 4MB</h5>
+                    </div>
+                    <div class="invalid-feedback">
+                        {{ $errors->first('anggota_ktm${[anggota]}') }}
+                    </div>
+                  </div>
+                </div>
+              </div>             
+            </div>
+            <div class="invalid-feedback">
+              {{ $errors->first('anggota${[anggota]}') }}
+            </div>
+          </div>
+          `);
+          
+        }
+
+        anggota = anggotaIn;
+      }else{
+        $('.anggota-con').append(` 
+        <!-- Address -->
+            <h6 class="heading-small text-muted mb-4">Upload Berkas Persyaratan</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group ">
+                    <label class="form-control-label" for="input-email">Data Anggota</label>
+                    <div class="memberexcelform">
+                        <input type="file" name="anggota_excel" class="form-control {{ $errors->first('anggota_excel') ? 'is-invalid' : ''}}" required>  
+                        <br>
+                        <h5>Template Excel dapat diunduh <a class="link-primary" href="{{url('api/file/template?filename=template_anggota.xlsx')}}">disini</a></h5>
+                        <h5>File harus berformat .xlsx (excel)</h5>
+                        <h5>Ukuran maksimal 8MB</h5>
+                    </div>
+                    <div class="invalid-feedback">
+                        {{ $errors->first('anggota_excel') }}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group ">
+                    <label class="form-control-label" for="input-email">Foto Kartu Tanda Mahasiswa</label>
+                    <div class="ktmform">
+                        <input type="file" name="anggota_ktm" class="form-control {{ $errors->first('anggota_ktm') ? 'is-invalid' : ''}}" required>  
+                        <br>
+                        <h5>Berkas berisikan ${anggotaIn} foto ktm dengan format <b>KodePT-NIM-Nama-NamaTim</b></h5>
+                        <h5>File harus berformat .zip </h5>
+                        <h5>Ukuran maksimal 20MB</h5>
+                    </div>
+                    <div class="invalid-feedback">
+                        {{ $errors->first('anggota_ktm') }}
+                    </div>
+                  </div>
+                </div>
+              </div>             
+            </div>
+            <div class="invalid-feedback">
+              {{ $errors->first('anggota') }}
+            </div>
+        `)
       }
 
-      console.log('anggota : '+anggota);
-
-      
       $('.input-university').select2();
       $('.input-university').prop("disabled", true);
     }
 
     // trigger sweet alert 
-    let removeMember = (anggotaId) => {
+    let removeMember = (link,key) => {
       Swal.fire({
         title: 'Apakah Anda Yakin?',
         text: "Anda tidak bisa mengembalikan lagi !",
@@ -428,24 +512,34 @@
         cancelButtonColor: '#f5365c',
         confirmButtonText: 'Ya, Hapus Anggota'
       }).then((result) => {
-          hapusAnggota(anggotaId);
+          hapusAnggota(key);
       })
     }
 
     let hapusAnggota = (anggotaId) => {
-      console.log('anggota : '+anggota,'id : '+anggotaId);
+      console.log(anggotaId,anggota);
       
+      // change other form anggota when exist
+      let head = $(`#anggota${anggotaId}`).next();
       $(`#anggota${anggotaId}`).remove();
-      $('.fg-anggota').attr("id",`anggota1`);
-      $('.fg-anggota .anggota-title').text(`Anggota 1`);
-      $(".fg-anggota .badge").attr("onclick",`removeMember(1)`);
+      for (let index = anggotaId; index <= anggota; index++) {
+        head.attr("id",`anggota${index}`);
+        head.find(`.anggota-title`).text(`Anggota ${index}`);
+        head.find(`.badge`).attr("onclick",`removeMember('',${index})`);
+        head = head.next();
+      }
+
       anggota--;
+
+      // mengupdate jumlah anggota
       $('#jumlah_anggota').val(anggota);
 
-      if(anggota < 2){
+      // show tambah anggota button when anggota < 2
+      if(anggota==maxanggota) {
+        $('#tambahAnggota').hide();
+      }else{
         $('#tambahAnggota').show();
       }
-      console.log(anggota);
     }
 
     $('#acceptRequirement').on('click',()=>{
@@ -454,11 +548,8 @@
 
         if(this.checked == true){
           $("#buatTim").prop("disabled", false);
-          console.log('check');
-          
         } else {
           $("#buatTim").prop("disabled", true);
-          console.log('uncheck');
         }
       });
     })

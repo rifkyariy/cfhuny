@@ -196,3 +196,18 @@
      }
 }
 
+.link-primary {
+    text-decoration: none;
+    color: #2F59EC !important ;
+    background-color: transparent;
+}
+
+.link-primary:hover {
+    text-decoration: none;
+    color: #2F59EC !important;
+    background-color: transparent;
+}
+
+#defaultState {
+    color: rgb(177, 177, 177) !important;
+}

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Team;
+use App\Member;
 use App\PerguruanTinggi;
 use Auth;
 use Illuminate\Support\Facades\Storage;
@@ -38,24 +39,27 @@ class UserController extends Controller
     public function update(Request $request, $userId)
     {
         $user = User::findOrFail($userId);
-
         if($user->role == "Mahasiswa") {
             $this->validate($request, [
-                'ktm' => 'required|mimes:jpeg,png|max:4096',
                 'name' => 'required|max:100',
-                'nim' => 'required|digits_between:10,15',
+                'nim' => 'digits_between:10,15',
                 'prodi' => 'required',
-                'phone' => 'required|digits_between:10,20',
+                'phone' => 'digits_between:10,20',
                 'university_id' => 'required',
             ]);
+
+            if($user->ktm == null){
+                $this->validate($request, [
+                    'ktm' => 'required|mimes:jpeg,png|max:4096'
+                ]);
+            }
         } else {
             $this->validate($request, [
                 'name' => 'required|max:100',
                 'phone' => 'required|unique:users|digits_between:10,20',
             ]);
         }
-        // dd($request->file('ktm'));
-        
+
         $user->name = $request->name;
         $user->phone = $request->phone;
         $user->university_id = $request->university_id;
@@ -73,9 +77,31 @@ class UserController extends Controller
 
         $user->save();
 
+        $memberId = Member::where('user_id','=',Auth::user()->id)->first();
+        if($memberId != null){
+            $member = $memberId;
+            $member->name = $request->name;
+            $member->phone = $request->phone;
+            $member->email = $request->email;
+            $member->university_id = $request->university_id;
+            if($request->nim) {
+                $member->nim = $request->nim;
+            }
+            if($request->prodi) {
+                $member->prodi = $request->prodi;
+            }
+            if($request->file('ktm')) {
+                $member->ktm = $user->ktm;
+            }
+
+            $member->user_id = $user->id;
+            $member->save();
+
+            $this->updateMemberUnivId($member->id,$request->university_id);
+        }
+
         return redirect()->back()->with('message','Profil berhasil diupdate');
     }
-
     public function index()
     {
         if(Auth::user()->role != "Admin") {
@@ -148,7 +174,7 @@ class UserController extends Controller
             return 'Directory does not exist!';
         }
 
-        if (!$file){
+        if ($file == null){
             $upfile->storeAs($dir["path"],$filename,'google');
         }else {
             Storage::cloud()->delete($file['path']);
@@ -156,6 +182,22 @@ class UserController extends Controller
         }
         
         return 'File was created in the sub directory in Google Drive';
+    }
+
+    public function updateMemberUnivId($ketuaMemberId,$newUnivId){
+        $ketuaMember = Member::findOrFail($ketuaMemberId);
+        
+        $editedMember = [];
+        foreach($ketuaMember->teams as $team) {
+            $team = Team::where('id','=',$team->pivot->team_id)->first();
+            foreach ($team->members as $member) {
+                if($member->pivot->role == "Anggota"){
+                    $member->university_id = $newUnivId;
+                    $member->save();
+                }
+            }
+        }
+
     }
 
 

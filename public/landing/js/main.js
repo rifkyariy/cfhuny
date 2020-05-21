@@ -15,12 +15,21 @@ $(function() {
         var scroll = $(window).scrollTop();
         if (scroll < 20) {
             $(".navbar-area").removeClass("sticky");
-            $(".navbar-area img").attr("src", "landing/assets/images/logo.svg");
+            $(".navbar-area img").attr("src", "landing/images/logo-alt-white.png");
         } else {
             $(".navbar-area").addClass("sticky");
-            $(".navbar-area img").attr("src", "landing/assets/images/logo-2.svg");
+            $(".navbar-area img").attr("src", "landing/images/logo-black.png");
         }
     });
+
+    $(window).on('resize load', function () {
+        if($(window).width() >= 990){
+            $('.hideonbig').hide();
+        }else{
+            $('.hideonbig').show();
+
+        }
+    })
 
     
     //===== Section Menu Active

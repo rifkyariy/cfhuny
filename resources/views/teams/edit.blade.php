@@ -8,8 +8,7 @@
       <br> <br>
       <div class="navbar-brand">
         <div class="sidenav-header  align-items-center">
-            {{-- <img src="{{asset('img/brand/logo-infinite.png')}}" class="navbar-brand-img" alt="Logo Infinite"> --}}
-            Distancing Fest.
+          <img src="{{asset('img/brand/logo-black.png')}}" class="navbar-brand-img" alt="Logo Infinite">
         </div>
       </div>
       <div class="navbar-inner">
@@ -219,6 +218,7 @@
                             {{ $errors->first('cabang_lomba') }}
                         </div>
                       </div>
+                      <label >* Untuk mengubah cabang lomba anda harus menghapus tim dan membuat ulang</label>
                     </div>
                   </div>
                 </div>
@@ -234,7 +234,13 @@
                           <label class="anggota-title form-control-label {{ $errors->first('anggota${[anggota]}') ? 'is-invalid' : ''}}" for="input-address">{{$key == 0? 'Ketua' : 'Anggota '.$key}}</label> 
                           @if ($key != 0)
                             <input type="hidden" name="anggota_id[]" id="input-username" class="form-control {{ $errors->first('anggota_id[]') ? 'is-invalid' : ''}}"  value="{{$member->id}}">    
-                            <a ><span onclick="hapusAnggota({{'anggota'.$key}})" class=" ml-2 badge badge-pill badge-danger my-1">Hapus Anggota</span></a>
+                            <a >
+                              <span 
+                              onclick="removeMember('{{ route('teams.removemember', [$team->id,$member->id])}}',{{$key}})" 
+                              class=" ml-2 badge badge-pill badge-danger my-1">
+                              Hapus Anggota
+                              </span>
+                            </a>
                           @endif
                           <br>
                           <h6 class="heading-small text-muted mb-4">Informasi {{$key == 0? 'Ketua' : 'Anggota'}}</h6>
@@ -260,7 +266,7 @@
                               <div class="col-lg-6">
                                   <div class="form-group">
                                     <label class="form-control-label" for="input-university">Universitas</label>
-                                    <input id="input-university-id" name="anggota_university_id[]" type="hidden" value="{{ Auth::user()->university_id }}">
+                                    <input id="input-university-id" name="" type="hidden" value="{{ Auth::user()->university_id }}">
                                     <select class="form-control input-university" id="input-university">
                                       @if ($pt!=null)
                                         <option value="{{$pt->id}}">{{$pt->name}}</option>
@@ -302,7 +308,7 @@
                               </div>
                             </div>
                             @if ($key == 0)
-                              <label ><b>* Anda tidak bisa mengubah informasi Ketua disini, Anda bisa mengubah melalui menu <a href="{{url('profile')}}">Profil</a>. </b></label>
+                              <label >* Anda tidak bisa mengubah informasi Ketua disini, Anda bisa mengubah melalui menu <a href="{{url('profile')}}"><b>Profil</b></a>. </label>
                             @endif
                           </div>
                           <hr class="my-4" />
@@ -314,6 +320,7 @@
                                 <div class="col-lg-6">
                                   <div class="form-group ">
                                     <label class="form-control-label" for="input-email">Foto Kartu Tanda Mahasiswa</label>
+                                    <br>
                                     <div class="ktmform{{$key}}">
                             
                                     @if ($member->ktm != null)
@@ -342,15 +349,69 @@
                         @endforeach
                       </div>
 
-                      <a class="btn-cl-white btn btn-form btn-success" id="tambahAnggota" onclick="tambahAnggota()">Tambah Anggota</a><br><br>
+                      @if (count($members) > 1 && count($members) < 7)
+                        <a class="btn-cl-white btn btn-form btn-success" id="tambahAnggota" onclick="tambahAnggota()">Tambah Anggota</a><br><br>
+                      @elseif($cabangLomba->id == 2)
+                        <label>Lomba ini tidak memiliki anggota , Lomba Bersifat Individu</label>
+                      @else
+                        <h6 class="heading-small text-muted mb-4">Upload Berkas Persyaratan</h6>
+                        <div class="pl-lg-4">
+                          <div class="row">
+                            <div class="col-lg-6">
+                              <div class="form-group ">
+                                <label class="form-control-label" for="input-email">Data Anggota (.xlsx)</label>
+                                <div class="memberexcelform">
+                                      @if ($team->excel_member != null)
+                                        <a class="btn btn-cl-white btn-form btn-warning" id="downloadXLSX" onclick="downloadXLSX(this,{{$key}},'{{$team->excel_member}}')">  Download Data </a>
+                                        <a class="btn btn-cl-white btn-form btn-success" id="reuploadXLSX" onclick="reuploadXLSX({{$key}},'{{$team->excel_member}}')">Upload Ulang</a>
+                                      @else  
+                                        <input type="file" name="anggota_excel" class="form-control {{ $errors->first('anggota_excel') ? 'is-invalid' : ''}}" required>  
+                                        <br>
+                                        <h5>Template Excel dapat diunduh <a class="link-primary" href="{{url('api/file/template?filename=template_anggota.xlsx')}}">disini</a></h5>
+                                        <h5>File harus berformat .xlsx (excel)</h5>
+                                        <h5>Ukuran maksimal 8MB</h5>
+                                      @endif
+                                </div>
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('anggota_excel') }}
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-lg-6">
+                              <div class="form-group ">
+                                <label class="form-control-label" for="input-email">Berkas Foto Kartu Tanda Mahasiswa (.zip) </label>
+                                <div class="ktmzipform">
+                                    @if ($team->archive_member != null)
+                                      <a class="btn btn-cl-white btn-form btn-warning" id="downloadZIP" onclick="downloadZIP(this,{{$key}},'{{$team->archive_member}}')">  Download KTM</a>
+                                      <a class="btn btn-cl-white btn-form btn-success" id="reuploadZIP" onclick="reuploadZIP({{$key}},'{{$team->archive_member}}')">Upload Ulang</a>
+                                    @else  
+                                      <input type="file" name="anggota_ktm" class="form-control {{ $errors->first('anggota_ktm') ? 'is-invalid' : ''}}" required>  
+                                      <br>
+                                      <h5>Berkas berisikan foto ktm dengan format <b>KodePT-NIM-Nama-NamaTim</b></h5>
+                                      <h5>File harus berformat .zip </h5>
+                                      <h5>Ukuran maksimal 20MB</h5>
+                                    @endif
+                                </div>
+                                <div class="invalid-feedback">
+                                    {{ $errors->first('anggota_ktm') }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>             
+                        </div>
+                        <div class="invalid-feedback">
+                          {{ $errors->first('anggota') }}
+                        </div>
+                      
+                      @endif
                     </div>
                   </div>           
                 </div>
 
-                <input id="jumlah_anggota" name="jumlah_anggota" type="hidden">
+              <input id="jumlah_anggota" name="jumlah_anggota" type="hidden" value="{{$team->member_count}}">
                 <input id="anggota_ganti_ktm" name="anggota_ganti_ktm" type="hidden">
                 <hr class="my-4" />
-                <div class="pl-lg-4">
+                <div class="pl-lg-4"> 
                     <button type="submit" id="buatTim" class="btn btn-primary" >Update Perubahan</button>
                 </div>
               </form>
@@ -375,6 +436,16 @@
 @section('localjs')
   <script>
     let anggota = {{$memberCount}};
+    let maxanggota = 0;
+    let gantiKTM = [];
+
+    for (let index = 0; index < anggota; index++) {
+      gantiKTM.push(0)
+    }
+    
+    console.log(gantiKTM);
+    
+    
 
     $(document).ready(function() {
       // initiate select2
@@ -408,33 +479,61 @@
 
       // init state
       // disable univeristas select
-      $('.input-university').select2();
-      $('.input-university').prop("disabled", true);
+      $('.input-university, #input-cabang-lomba').select2();
+      $('.input-university, #input-cabang-lomba').prop("disabled", true);
 
       // adding jumlah anggota
       $('#jumlah_anggota').val(anggota);
 
-      // hide tambah anggota button when anggota == 2
-      if (anggota == 2){
-        $('#tambahAnggota').hide();
-      }
+      // adding max anggota
+      const id = $('#cabang_lomba').val() ;
+      console.log(id);
+      
+      $.get( 
+      '{{url("/api/data/cabanglomba")}}',
+      {
+        'id' : id
+      }, 
+      function( data ) {
+        setAnggota(data.anggota);
+      });
 
     });
 
-    // select2 onchange trigger
-    $('#input-cabang-lomba').on('change',() => {
+      // select2 onchange trigger
+      $('#input-cabang-lomba').on('change',() => {
       let id = $('#input-cabang-lomba :selected').val();
       $('#cabang_lomba').val(id) ;
+      
+      $.get( 
+      '{{url("/api/data/cabanglomba")}}',
+      {
+        'id' : id
+      }, 
+      function( data ) {
+        setAnggota(data.anggota);
+      });
+
+      
     })
+
+    let setAnggota = (newData) =>{
+      maxanggota = newData-1;
+      
+      // set array ganti anggota
+      $('#anggota_ganti_ktm').val(gantiKTM);
+      
+    }
 
     // fungsi untuk tambah anggota
     let tambahAnggota = () => {
       // html component
-      if (anggota<=2) {
+      if (anggota<=6) {
         $('.anggota-con').append(` 
         <div class="form-group fg-anggota" id="anggota${anggota+1}">
           <label class="anggota-title form-control-label {{ $errors->first('anggota${[anggota]}') ? 'is-invalid' : ''}}" for="input-address">Anggota  ${anggota+1}</label> 
-          <a ><span onclick="hapusAnggota(${anggota+1})" class=" ml-2 badge badge-pill badge-danger my-1">Hapus Anggota</span></a>
+          <a >
+            <span onclick="removeMember('',${anggota+1})" class=" ml-2 badge badge-pill badge-danger my-1">Hapus Anggota</span></a>
           <br>
           <h6 class="heading-small text-muted mb-4">Informasi Anggota</h6>
           <div class="pl-lg-4">
@@ -529,22 +628,31 @@
         `);
 
         anggota++;
+        console.log('anggota'+anggota);
+        
         $('#jumlah_anggota').val(anggota);
 
       }
-      
-      // hide tambah anggota button when anggota == 2
-      if (anggota == 2){
+
+      if(anggota==maxanggota) {
         $('#tambahAnggota').hide();
+      }else{
+        $('#tambahAnggota').show();
       }
+
+      
+      // set array ganti anggota
+      gantiKTM.push(1);
+      console.log(gantiKTM);
+      $('#anggota_ganti_ktm').val(gantiKTM);
       
       // disable univeristas select
-      $('.input-university').select2();
-      $('.input-university').prop("disabled", true);
+      $('.input-university, #input-cabang-lomba').select2();
+      $('.input-university, #input-cabang-lomba').prop("disabled", true);
     }
 
     // fungsi untuk hapus anggota (tampil alert)
-    let removeMember = (link) => {
+    let removeMember = (link,key) => {
       Swal.fire({
         title: 'Apakah Anda Yakin?',
         text: "Anda tidak bisa mengembalikan lagi !",
@@ -554,27 +662,46 @@
         cancelButtonColor: '#f5365c',
         confirmButtonText: 'Ya, Hapus Member'
       }).then((result) => {
+        if(link!='' && result.value == true){
           window.location = link;
+        }else{
+          // hapus selected array index
+          gantiKTM.splice(key-1, 1);
+          console.log(gantiKTM);
+
+          hapusAnggota(key);
+        }
       })
     }
 
-    // real fungsi untuk hapus anggota
+    // hapus anggota secara tampilan (tanpa hapus db)
     let hapusAnggota = (anggotaId) => {
       
       // change other form anggota when exist
+      let head = $(`#anggota${anggotaId}`).next();
       $(`#anggota${anggotaId}`).remove();
-      $('.fg-anggota').attr("id",`anggota1`);
-      $('.fg-anggota .anggota-title').text(`Anggota 1`);
-      $(".fg-anggota .badge").attr("onclick",`hapusAnggota(1)`);
+      for (let index = anggotaId; index <= anggota; index++) {
+        head.attr("id",`anggota${index}`);
+        head.find(`.anggota-title`).text(`Anggota ${index}`);
+        head.find(`.badge`).attr("onclick",`removeMember('',${index})`);
+        head = head.next();
+      }
+
       anggota--;
+      console.log('anggota'+anggota);
 
       // mengupdate jumlah anggota
       $('#jumlah_anggota').val(anggota);
 
       // show tambah anggota button when anggota < 2
-      if(anggota < 2){
+      if(anggota==maxanggota) {
+        $('#tambahAnggota').hide();
+      }else{
         $('#tambahAnggota').show();
       }
+
+      // set array ganti anggota
+      $('#anggota_ganti_ktm').val(gantiKTM);
     }
 
     
@@ -611,13 +738,89 @@
           </div>
         <div>
       `);
-      $('#anggota_ganti_ktm').val(key);
+      
+      // set array ganti anggota
+      gantiKTM[key-1] = 1;
+      console.log(gantiKTM);
+      $('#anggota_ganti_ktm').val(gantiKTM);
     };
 
     let batalReupload = (key,file) => {
       $(`.ktmform${key}`).html(`
         <a class="btn btn-cl-white btn-form btn-warning" id="downloadKTM" onclick="downloadKTM(this,${key},'${file}')">  Download KTM</a>
         <a class="btn btn-cl-white btn-form btn-success" id="reuploadKTM" onclick="reuploadKTM(${key},'${file}')">Upload Ulang</a>
+      `);
+
+      
+      // set array ganti anggota
+      gantiKTM[key-1] = 0;
+      console.log(gantiKTM);
+      $('#anggota_ganti_ktm').val(gantiKTM);
+    };
+
+    // download XLSX 
+    let downloadXLSX = (clickedEl,member,file) => {
+      addLoading(clickedEl);
+      
+      window.location = `/api/file/data?filename=${file}`;
+
+    };
+
+    // reupload XLSX
+    reuploadXLSX = (key,file) => {
+      $(`.memberexcelform`).html(`
+        <div class="row">
+          <div class="col-lg-9">
+            <input type="file" name="anggota_excel" class="form-control {{ $errors->first('anggota_excel') ? 'is-invalid' : ''}}" required>  
+            <br>
+            <h5>Template Excel dapat diunduh <a class="link-primary" href="{{url('api/file/template?filename=template_anggota.xlsx')}}">disini</a></h5>
+            <h5>File harus berformat .xlsx (excel)</h5>
+            <h5>Ukuran maksimal 8MB</h5>
+          </div>
+          <div class="col-lg-3">
+            <a class="btn btn-cl-white btn-form btn-danger" id="batalReupload" onclick="batalReuploadXLSX(${key},'${file}')">Batal</a>
+          </div>
+        <div>
+      `);
+    };
+
+    let batalReuploadXLSX = (key,file) => {
+      $(`.memberexcelform`).html(`
+        <a class="btn btn-cl-white btn-form btn-warning" id="downloadXLSX" onclick="downloadXLSX(this,${key},'${file}')">  Download KTM</a>
+        <a class="btn btn-cl-white btn-form btn-success" id="reuploadXLSX" onclick="reuploadXLSX(${key},'${file}')">Upload Ulang</a>
+      `);
+    };
+
+    // download ZIP 
+    let downloadZIP = (clickedEl,member,file) => {
+      addLoading(clickedEl);
+      
+      window.location = `/api/file/data?filename=${file}`;
+
+    };
+
+    // reupload ZIP
+    reuploadZIP = (key,file) => {
+      $(`.ktmzipform`).html(`
+        <div class="row">
+          <div class="col-lg-9">
+            <input type="file" name="anggota_ktm" class="form-control {{ $errors->first('anggota_ktm') ? 'is-invalid' : ''}}" required>  
+            <br>
+            <h5>Berkas berisikan foto ktm dengan format <b>KodePT-NIM-Nama-NamaTim</b></h5>
+            <h5>File harus berformat .zip </h5>
+            <h5>Ukuran maksimal 20MB</h5>
+          </div>
+          <div class="col-lg-3">
+            <a class="btn btn-cl-white btn-form btn-danger" id="batalReupload" onclick="batalReuploadZIP(${key},'${file}')">Batal</a>
+          </div>
+        <div>
+      `);
+    };
+
+    let batalReuploadZIP = (key,file) => {
+      $(`.ktmzipform`).html(`
+        <a class="btn btn-cl-white btn-form btn-warning" id="downloadXLSX" onclick="downloadZIP(this,${key},'${file}')">  Download KTM</a>
+        <a class="btn btn-cl-white btn-form btn-success" id="reuploadXLSX" onclick="reuploadZIP(${key},'${file}')">Upload Ulang</a>
       `);
     };
   </script>

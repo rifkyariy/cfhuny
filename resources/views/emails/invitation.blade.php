@@ -1,12 +1,12 @@
 @component('mail::message')
-# Undangan Tim Gemastik
+# Verifkasi Email
 
-Anda mendapat undangan tim gemastik, klik tombol dibawah untuk konfirmasi lebih lanjut
+Ini merupakan email verifikasi, klik tombol dibawah untuk verifikasi email anda
 
 @component('mail::button', ['url' => 'https://gemastik.infiniteuny.id/teams', 'color' => 'primary'])
 Konfirmasi Undangan Tim
 @endcomponent
 
 Salam hangat,<br>
-Infinite UNY
+Universitas Negeri Yogyakarta
 @endcomponent

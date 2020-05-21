@@ -2360,7 +2360,7 @@ p {
        10.SLIDER css 
 ===========================*/
 .carousel-item {
-  background-color: #2F59EC;
+  background: linear-gradient(87deg, #2F59EC 0, #825ee4 100%) !important;
   position: relative;
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);}
@@ -2432,11 +2432,11 @@ p {
     font-weight: 600; }
     @media only screen and (min-width: 992px) and (max-width: 1199px) {
       .slider-content .title {
-        font-size: 48px;
+        font-size: 38px;
         line-height: 80px; } }
     @media only screen and (min-width: 768px) and (max-width: 991px) {
       .slider-content .title {
-        font-size: 48px;
+        font-size: 38px;
         line-height: 90px; } }
     @media (max-width: 767px) {
       .slider-content .title {
@@ -3012,11 +3012,12 @@ p {
     width: 100%; }
   .team-style-eleven .team-content {
     position: absolute;
+    min-height: 180px;
     bottom: 0;
     left: 0;
     width: 100%;
     background-color: #fff;
-    padding-top: 25px;
+    padding-top: 15px;
     padding-bottom: 25px;
     z-index: 5;
     -webkit-transition: all 0.3s ease-out 0s;
@@ -3035,9 +3036,9 @@ p {
       height: 100%;
       top: 0;
       left: 0;
-      background: -webkit-linear-gradient(left, #2F59EC 0%, #2bdbdc 100%);
-      background: -o-linear-gradient(left, #2F59EC 0%, #2bdbdc 100%);
-      background: linear-gradient(to right, #2F59EC 0%, #2bdbdc 100%);
+      background: linear-gradient(87deg, #2F59EC 0, #825ee4 100%) !important;
+      background: -webkit-linear-gradient(87deg, #2F59EC 0, #825ee4 100%);
+      background: -o-linear-gradient(87deg, #2F59EC 0, #825ee4 100%);
       z-index: -1;
       -webkit-transition: all 0.3s ease-out 0s;
       -moz-transition: all 0.3s ease-out 0s;
@@ -3074,9 +3075,11 @@ p {
             -o-transition: all 0.3s ease-out 0s;
             transition: all 0.3s ease-out 0s; }
             .team-style-eleven .team-content .team-social .social li a:hover {
-              color: #2F59EC; }
+              color: rgb(47, 47, 47); }
     .team-style-eleven .team-content .team-name a {
       color: #121212;
+      margin-top: -10px ;
+      padding-bottom: 3% ;
       font-size: 24px;
       font-weight: 600;
       -webkit-transition: all 0.3s ease-out 0s;
@@ -3089,7 +3092,7 @@ p {
           font-size: 18px; } }
     .team-style-eleven .team-content .sub-title {
       font-size: 16px;
-      color: #2F59EC;
+      color: rgb(73, 73, 73);
       -webkit-transition: all 0.3s ease-out 0s;
       -moz-transition: all 0.3s ease-out 0s;
       -ms-transition: all 0.3s ease-out 0s;
@@ -3147,7 +3150,10 @@ p.form-message.success, p.form-message.error {
   font-size: 24px;
   color: #fff;
   border-radius: 50%; }
-.contact-info .single-contact-info .contact-info-content {}
+
+.contact-info .single-contact-info .contact-info-content {
+  
+}
   .contact-info .single-contact-info .contact-info-content .text {
     color: #121212; }
 .contact-info .single-contact-info.contact-color-1 .contact-info-icon i {
@@ -3278,6 +3284,15 @@ p.form-message.success, p.form-message.error {
   text-align: center;
 }
 
+
+#kategorilomba .container {
+  max-width: 1240px ;
+}
+
+.features-icon {
+  max-width: 100px;
+}
+
 .expandbtn {
   color: white !important;
   background-color: #2F59EC;
@@ -3328,6 +3343,19 @@ p.form-message.success, p.form-message.error {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.ellipsis{
+  display: block;
+  display: -webkit-box;
+  max-width: 400px;
+  height: 70px;
+  margin: 0 auto;
+  font-size: 26px;
+  line-height: 1.4;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .navbar-brand h5 {
   font-weight: bolder;
@@ -3350,9 +3378,24 @@ p.form-message.success, p.form-message.error {
   text-transform: uppercase;
 }
 
+.cartesionlogo {
+  max-width: 140px;
+}
+
 @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .container {
+        padding: 0 35px;
+      }
       .subtitle {
+        font-size: 1.2em;
         color: white; } }
     @media (max-width: 767px) {
+      .container {
+        padding: 0 35px;
+      }
       .subtitle {
-        color: white; } }
+        font-size: 1.2em;
+        color: white; 
+      
+      } }
+

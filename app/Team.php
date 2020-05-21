@@ -11,7 +11,7 @@ class Team extends Model
         return $this->belongsToMany('App\Member')->withPivot('role')->withTimestamps();
     }
 
-    public function proposals() {
-        return $this->hasMany('App\Proposal');
+    public function submissions() {
+        return $this->hasMany('App\Submission');
     }
 }

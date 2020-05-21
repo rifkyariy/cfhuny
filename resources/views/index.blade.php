@@ -5,13 +5,13 @@
     <meta charset="utf-8">
 
     <!--====== Title ======-->
-    <title>UNY Distancing Festival</title>
+    <title>UNY Cartesion</title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!--====== Favicon Icon ======-->
-    <link rel="shortcut icon" href="{{ asset('landing/images/favicon.svg') }} " type="image/png">
+    <link rel="shortcut icon" href="{{ asset('landing/images/cartesion-sm.png') }} " type="image/png">
 
     <!--====== Magnific Popup CSS ======-->
     <link rel="stylesheet" href="{{ asset('landing/css/magnific-popup.css') }}">
@@ -30,6 +30,13 @@
 
     <!--====== Style CSS ======-->
     <link rel="stylesheet" href="{{ asset('landing/css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+    <link href="{{ asset('landing/css/main.css') }}" rel="stylesheet" />
+
+    <!--====== Extension CSS =======-->
+    <link href="{{asset('css/extension/select2.min.css')}}" rel="stylesheet" />
+
+
 
 </head>
 
@@ -63,11 +70,11 @@
 
     <section class="navbar-area">
         <div class="container">
-        @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-        @endif        
+            @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endif
             <div class="row">
                 <div class="col-lg-12">
                     <nav class="navbar navbar-expand-lg">
@@ -81,30 +88,44 @@
                         </button>
 
                         <div class="collapse navbar-collapse sub-menu-bar" id="navbarTwo">
-                            <ul class="navbar-nav  f-right">
-                                <li class="nav-item active"><a class="page-scroll" href="#home">Distancing Fest.</a></li>
-                                <li class="nav-item"><a class="page-scroll" href="#tentanggemastik">Tentang</a></li>
-                                <li class="nav-item"><a class="page-scroll" href="#bidanglomba">Bidang Lomba</a></li>
+                            <ul class="navbar-nav  f-left">
+                                <li class="nav-item active">
+                                    <a class="page-scroll" href="#home">
+                                        <img class="cartesionlogo" src="{{ asset('landing/images/logo-alt-white.png') }}"/>
+                                    </a>
+                                </li>
+                                <li class="nav-item"><a class="page-scroll" href="#tentangUnyCartesion">Tentang</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#kategorilomba">Kategori Lomba</a>
+                                </li>
                                 <li class="nav-item"><a class="page-scroll" href="#berita">Berita</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#kodePT">Kode PT</a>
                                 <li class="nav-item"><a class="page-scroll" href="#faq">FAQ</a></li>
-                                {{-- <li class="nav-item"><a class="page-scroll" href="#about">About</a></li>
-                                <li class="nav-item"><a class="page-scroll" href="#team">Team</a></li>
-                                <li class="nav-item"><a class="page-scroll" href="#contact">Contact</a></li> --}}
+                                
+                                @if(Auth::user())
+                                    @if(Auth::user()->role == "Mahasiswa")
+                                    <li class="nav-item"><a class="hideonbig page-scroll" href="{{ route('teams.index') }}">Dashboard</a></li>
+                                    @else
+                                    <li class="nav-item"><a class="hideonbig page-scroll" href="{{ route('admin.index') }}">Dashboard</a></li>
+                                    @endif
+                                @else
+                                    <li class="nav-item"><a class="hideonbig page-scroll" href="{{ route('admin.index') }}">Unduh Panduan</a></li>
+                                    <li class="nav-item"><a class="hideonbig page-scroll" href="{{ url('/login') }}">Masuk</a></li>
+                                @endif
                             </ul>
                         </div>
 
                         <div class="navbar-btn d-none d-sm-inline-block">
                             <ul>
-                            @if(Auth::user()) 
-                                @if(Auth::user()->role == "Mahasiswa") 
+                                @if(Auth::user())
+                                    @if(Auth::user()->role == "Mahasiswa")
                                     <li><a class="solid" href="{{ route('teams.index') }}">Dashboard</a></li>
-                                @else
+                                    @else
                                     <li><a class="solid" href="{{ route('admin.index') }}">Dashboard</a></li>
+                                    @endif
+                                @else
+                                    <li><a class="solid" href="{{ route('admin.index') }}">Unduh Panduan</a></li>
+                                    <li><a class="solid" href="{{ url('/login') }}">Masuk</a></li>
                                 @endif
-                            @else
-                                <li><a class="solid" href="{{ route('admin.index') }}">Unduh Panduan</a></li>
-                                <li><a class="solid" href="{{ route('login') }}">Masuk</a></li>
-                            @endif
                             </ul>
                         </div>
                     </nav> <!-- navbar -->
@@ -126,7 +147,7 @@
             </ol>
 
             <div class="carousel-inner">
-                
+
             </div>
 
             <a class="carousel-control-prev" href="#carouselThree" role="button" data-slide="prev">
@@ -142,26 +163,29 @@
 
     <!--====== Tentang Gemastik PART START ======-->
 
-    <section id="tentanggemastik" class="testimonial-area">
+    <section id="tentangUnyCartesion" class="testimonial-area">
         <div class="container">
             <div class="row justify-content-between">
-                <div class="col-xl-5 col-lg-6">
-                    <div class="testimonial-left-content tentang-gemastik-content mt-45">
-                        
-                    </div> <!-- testimonial left content -->
-                </div>
+                
                 <div class="col-lg-6">
                     <div class="testimonial-right-content mt-50">
                         <div class="quota flip-180">
-                            <i class="lni lni-cup"></i>
+                            <i class="lni lni-book"></i>
                         </div>
                         <div class="testimonial-content-wrapper testimonial-active">
                             <div class="single-testimonial">
-                                <img class="gemastiklogo" src="{{ asset('landing/images/logo-gemastik-alt.png') }}" alt="" srcset="">
+
+                                <img class="gemastiklogo" src="{{ asset('landing/images/logo-unycartesion.png') }}"
+                                    alt="" srcset="">
                             </div> <!-- single testimonial -->
-                            
+
                         </div> <!-- testimonial content wrapper -->
                     </div> <!-- testimonial right content -->
+                </div>
+                <div class="col-xl-5 col-lg-6">
+                    <div class="testimonial-left-content tentang-UnyCartesion-content mt-45">
+
+                    </div> <!-- testimonial left content -->
                 </div>
             </div> <!-- row -->
         </div> <!-- container -->
@@ -171,20 +195,20 @@
 
     <!--====== Bidang Lomba PART START ======-->
 
-    <section id="bidanglomba" class="features-area">
+    <section id="kategorilomba" class="features-area">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-6 col-md-10">
                     <div class="section-title text-center pb-10">
-                        <h3 class="title">Bidang Lomba</h3>
+                        <h3 class="title">Kategori Lomba</h3>
                         <p class="text">
-                            Jadi di Gemastik nanti bakal ada bidang lomba apa aja sih ?
+                            Jadi di UNY Cartesion nanti bakal ada bidang lomba apa aja sih ?
                         </p>
                     </div> <!-- row -->
                 </div>
             </div> <!-- row -->
-            <div class="row justify-content-center bidang-lomba-content">
-                
+            <div class="row justify-content-center kategori-lomba-content">
+
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
@@ -192,7 +216,7 @@
     <!--====== FEATRES TWO PART ENDS ======-->
     <!--====== TEAM START ======-->
 
-    <section id="team" class="team-area pt-120 pb-130">
+    <section id="berita" class="team-area pt-120 pb-130">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-6 col-md-10">
@@ -204,72 +228,32 @@
             </div> <!-- row -->
             <br><br>
             <div class="row">
+                @foreach($berita as $b)
                 <div class="col-lg-4 col-sm-6">
                     <div class="team-style-eleven text-center mt-30 wow fadeIn" data-wow-duration="1s"
                         data-wow-delay="0s">
                         <div class="team-image">
-                            <img src="images/team-1.jpg" alt="Team">
+                            <img src="{{ asset('img'.'/'.'theme'.'/'.$b->gambar) }}" alt="Berita">
                         </div>
                         <div class="team-content">
                             <div class="team-social">
                                 <ul class="social">
-                                    <li><a href="#"><i class="lni lni-facebook-filled"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-twitter-original"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-linkedin-original"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-instagram"></i></a></li>
+                                    <li><a href="/detailBerita/{{$b->id}}">Selengkapnya</a></li>
                                 </ul>
                             </div>
-                            <h4 class="team-name"><a href="#">Jeffery Riley</a></h4>
-                            <span class="sub-title">Art Director</span>
+                            <h4 class="team-name"><a href="/detailBerita/{{$b->id}}">{{$b->judul}}</a></h4>
+                            <span class="sub-title ellipsis">{{$b->keterangan}}</span>
                         </div>
-                    </div> <!-- single team -->
+                    </div>
                 </div>
-                <div class="col-lg-4 col-sm-6">
-                    <div class="team-style-eleven text-center mt-30 wow fadeIn" data-wow-duration="1s"
-                        data-wow-delay="0s">
-                        <div class="team-image">
-                            <img src="images/team-2.jpg" alt="Team">
-                        </div>
-                        <div class="team-content">
-                            <div class="team-social">
-                                <ul class="social">
-                                    <li><a href="#"><i class="lni lni-facebook-filled"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-twitter-original"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-linkedin-original"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-instagram"></i></a></li>
-                                </ul>
-                            </div>
-                            <h4 class="team-name"><a href="#">Riley Beata</a></h4>
-                            <span class="sub-title">Web Developer</span>
-                        </div>
-                    </div> <!-- single team -->
-                </div>
-                <div class="col-lg-4 col-sm-6">
-                    <div class="team-style-eleven text-center mt-30 wow fadeIn" data-wow-duration="1s"
-                        data-wow-delay="0s">
-                        <div class="team-image">
-                            <img src="images/team-3.jpg" alt="Team">
-                        </div>
-                        <div class="team-content">
-                            <div class="team-social">
-                                <ul class="social">
-                                    <li><a href="#"><i class="lni lni-facebook-filled"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-twitter-original"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-linkedin-original"></i></a></li>
-                                    <li><a href="#"><i class="lni lni-instagram"></i></a></li>
-                                </ul>
-                            </div>
-                            <h4 class="team-name"><a href="#">Mark A. Parker</a></h4>
-                            <span class="sub-title">UX Designer</span>
-                        </div>
-                    </div> <!-- single team -->
-                </div>
-            </div> <!-- row -->
+                @endforeach
+            </div>
+            <!-- row -->
         </div> <!-- container -->
     </section>
 
-    <!--====== TEAM  ENDS ======-->
-    <!--====== ABOUT PART START ======-->
+    
+    <!--====== FAQ START ======-->
 
     <section id="faq" class="about-area">
         <div class="container">
@@ -277,27 +261,62 @@
                 <div class="col-lg-6">
                     <div class="faq-content mt-45">
                         <div class="about-title">
-                            
+
                         </div> <!-- faq title -->
                         <div class="about-accordion">
                             <div class="accordion" id="accordionExample">
-                                
+
                             </div>
                         </div> <!-- faq accordion -->
                     </div> <!-- faq content -->
                 </div>
                 <div class="col-lg-6">
-                    <div class="about-image ml-60 mt-50">
-                        <img src="{{asset('landing/images/faq.svg')}}"  alt="about">
+                    <div class="about-image ml-60 mt-200">
+                        <img src="{{asset('landing/images/img-faq.svg')}}" alt="Faq">
                     </div> <!-- faq image -->
                 </div>
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
 
-    <!--====== ABOUT PART ENDS ======-->
+    <!--====== FAQ PART ENDS ======-->
 
-   
+    <!--====== KODE PT START ======-->
+    <section id="kodePT" class="pt-120 pb-80">
+        <div class="s130">
+            <form>
+            <div class="section-title text-center pb-30">
+                <h3 class="title text-white">Cari Kode Perguruan Tinggi</h3>
+            </div>
+                <div class="inner-form">
+                    <div class="input-field first-wrap">
+                        <div class="svg-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path
+                                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
+                                </path>
+                            </svg>
+                        </div>
+                        <select class="form-control" id="input-university">
+                        </select>
+                        {{-- <input id="search" type="text" placeholder="Nama Perguruan Tinggi" /> --}}
+                    </div>
+                    <div class="input-field second-wrap">
+                        <button class="btn-search" type="button">SEARCH</button>
+                    </div>
+                </div>
+                <span class="info">
+                    <div class="result">
+                        
+                    </div>
+                </span>
+
+            </form>
+        </div>
+        
+    </section>
+    <!--====== KODE PT  ENDS ======-->
+
 
     <!--====== CONTACT PART START ======-->
 
@@ -307,51 +326,43 @@
                 <div class="col-lg-6 col-md-10">
                     <div class="section-title text-center pb-30">
                         <h3 class="title">Masih Ada Yang Mau Ditanyaiin ?</h3>
-                        <p class="text">Daripada bingung mau tanya kemana ,kuy langsung aja datangi kami atau hubungi kontak di bawah ini </p>
+                        <p class="text">Daripada bingung mau tanya kemana ,bisa langsung hubungi kontak di bawah ini
+                        </p>
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->
-            
+
             <div class="contact-info pt-30">
                 <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-contact-info contact-color-1 mt-30 ">
-                            <div class="contact-info-icon">
-                                <i class="lni lni-map-marker"></i>
-                            </div>
-                            <div class="contact-info-content media-body  mt-2">
-                                <p class="text"> Gedung Media Sebelah Selatan Lantai 2 Sayap Barat FT UNY</p>
-                            </div>
-                        </div> <!-- single contact info -->
-                    </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="single-contact-info contact-color-2 mt-30 ">
                             <div class="contact-info-icon text-center">
                                 <i class="lni lni-instagram"></i>
                             </div>
                             <div class="contact-info-content media-body mt-2">
-                                <p class="text"><a href="https://www.instagram.com/infinite.uny">@infinite.uny</a></p>
+                                <p class="text"><a href="#">@uny_official</a></p>
                             </div>
                         </div> <!-- single contact info -->
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-contact-info contact-color-3 mt-30 ">
+                            <div class="contact-info-icon">
+                                <i class="lni lni-phone"></i>
+                            </div>
+                            <div class="contact-info-content media-body mt-2">
+                                <p class="text">0851-5621-3423 (Admin Penalaran UNY)</p>
+                                <p class="text">0812-1530-0118 (Kemahasiswaan UNY)</p>
+                                <p class="text">0822-9209-5082 (Wuwu)</p>
+                            </div>
+                        </div> <!-- single contact info -->
+                    </div>
+                    <div class="col-lg-4 col-md-6">
                         <div class="single-contact-info contact-color-4 mt-30">
                             <div class="contact-info-icon ">
                                 <i class="lni lni-envelope"></i>
                             </div>
                             <div class="contact-info-content media-body  mt-2">
-                                <p class="text"><a href="mailto:hello@infiniteuny.id">hello@infiniteuny.id</a></p>
-                            </div>
-                        </div> <!-- single contact info -->
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-contact-info contact-color-3 mt-30 ">
-                            <div class="contact-info-icon">
-                                <i class="lni lni-phone"></i>
-                            </div>
-                            <div class="contact-info-content media-body  mt-2">
-                                <p class="text">+62 8982204670 (Fun)</p>
-                                <p class="text">+62 85877785879 (Sa)</p>
+                                <p class="text"><a href="mailto:cartesion@uny.ac.id">cartesion@uny.ac.id</a></p>
                             </div>
                         </div> <!-- single contact info -->
                     </div>
@@ -410,26 +421,32 @@
 
     <!--====== FOOTER PART START ======-->
 
-    <section class="footer-area footer-dark">
+    <section class="footer-area bg-white">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-6">
                     <div class="footer-logo text-center">
-                        <a class="mt-30" href="infiniteuny.id">
-                            <img src="{{ asset('landing/images/logo_infinite.svg') }}" alt="">
+                        <a class="mt-50" href="https://cartesion.uny.ac.id">
+                            <img src="{{ asset('landing/images/logo-unycartesion.png') }}" width="80%" alt="">
                         </a>
                     </div> <!-- footer logo -->
                     <ul class="social text-center mt-40">
-                        <li><a href="https://twitter.com/infinite_uny"><i class="lni lni-twitter-original"></i></a></li>
-                        <li><a href="https://www.instagram.com/infinite.uny"><i class="lni lni-instagram-original"></i></a></li>
+                        <li><a href="https://cartesion.uny.ac.id"><i><img src="/landing/images/globe.svg" width="25px"
+                                        height="25px" alt="website"></i></a></li>
+                        <li><a href="https://www.instagram.com/uny_official/?hl=id"><i><img
+                                        src="/landing/images/instagram.svg" width="25px" height="25px"
+                                        alt="website"></i></a></li>
                     </ul> <!-- social -->
                     <div class="footer-support text-center">
-                        <span class="number">+628982204670</span>
-                        <span class="mail">hello@infiniteuny.id</span>
+                        <span class="mail">cartesion@uny.ac.id</span>
+                        <span class="mail">                
+                            &copy; 2020 <a href="https://infiniteuny.id" class="font-weight-bold ml-1" target="_blank">Infinite UNY</a>
+                        </span>
                     </div>
-                    <div class="copyright text-center mt-35">
+                    <!-- <div class="copyright text-center mt-35">
                         <p class="text">Made with <i class="lni lni-heart-filled"></i> by Infinite UNY </p>
-                    </div> <!--  copyright -->
+                    </div>  -->
+                    <!--  copyright -->
                 </div>
             </div> <!-- row -->
         </div> <!-- container -->
@@ -486,10 +503,16 @@
     <!--====== Scrolling Nav js ======-->
     <script src="{{ asset('landing/js/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('landing/js/scrolling-nav.js') }}"></script>
-
+    
+    <!--====== Extension js =======-->
+    <script src="{{asset('js/extension/select2.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    
     <!--====== Main js ======-->
     <script src="{{ asset('landing/js/main.js') }}"></script>
     <script src="{{ asset('landing/js/contentdata.js') }}"></script>
+
+
 
 </body>
 

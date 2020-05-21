@@ -7,6 +7,7 @@ use App\CabangLomba;
 use App\Member;
 use App\PerguruanTinggi;
 use App\Proposal;
+use App\Submission;
 use App\Team;
 use App\User;
 use App\Mail\SendEmailInvitation;
@@ -18,7 +19,7 @@ class TeamsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'verified']);
+        $this->middleware('auth');
     }
 
     public function index()
@@ -33,17 +34,24 @@ class TeamsController extends Controller
         } else {
             $memberKetua = Member::where('user_id','=',Auth::user()->id)->first();
 
-            foreach($memberKetua->teams as $team) {
-                $teamActives[] = $team;
+            if($memberKetua==null){
+                return view('teams.index', ['teams' => []]);
+            }else{
+                foreach($memberKetua->teams as $team) {
+                    $teamActives[] = $team;
+                }
+    
+                foreach ($teamActives as $key => $team) {
+                    $cabanglomba = CabangLomba::find($team->cabang_lomba);
+                    $subs = Submission::where('team_id',"=",$team->id)->first();
+                    
+                    $team->cabang_lomba_detail = $cabanglomba;
+                    $team->subs_detail = $subs;
+                }
+                return view('teams.index', ['teams' => $teamActives]);
             }
 
-            foreach ($teamActives as $key => $team) {
-                $cabanglomba = CabangLomba::find($team->cabang_lomba);
-                $team->cabang_lomba_detail = $cabanglomba;
-            }
 
-
-            return view('teams.index', ['teams' => $teamActives]);
         }
     }
 
@@ -78,143 +86,165 @@ class TeamsController extends Controller
 
     public function store(Request $request)
     {
-        $validateData = $request->validate([
-            'name' => 'required|max:50',
-            'cabang_lomba' => 'required',
-            'anggota_name.*' => 'required',
-            'anggota_email.*' => 'required|email',
-            'anggota_university_id.*' => 'required',
-            'anggota_prodi.*' => 'required',
-            'anggota_ktm.*' => 'required'
-        ]);
+        // avoid timeout
+        set_time_limit(300);
 
-        
         $users = User::all();
         $teams = Team::all();
+        $members = Member::all();
 
         // jumlah anggota
         $memberCount = $request->jumlah_anggota;
-        if($memberCount==1){
-            if($request->anggota_nim[0] == Auth::user()->nim) {
-                return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
-            }
-        }
 
-        if ($memberCount > 1) {
-            if($request->anggota_nim[0] == $request->anggota_nim[1]) {
-                return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
+        // create jika anggota 6 orang (total 7)
+        if($request->jumlah_anggota <=6){
+            $validateData = $request->validate([
+                'name' => 'required|max:50',
+                'cabang_lomba' => 'required',
+                'anggota_name.*' => 'required',
+                'anggota_email.*' => 'required|email',
+                'anggota_university_id.*' => 'required',
+                'anggota_prodi.*' => 'required',
+                'anggota_ktm.*' => 'required'
+            ]);
+
+            // check if nim already exist but differet credentials
+            if($memberCount!=0){
+                foreach ($members as $member) {
+                    foreach ($request->anggota_nim as $key => $anggotanim) {
+                        if($member->nim == $anggotanim){
+                            if($member->university_id != $request->anggota_university_id[$key]){
+                                return redirect()->back()->with('error', 'Nim telah terdaftar !');
+                            }
+                        }
+                    }
+                }
+
+                // check if same 
+                for ($i=0; $i < $memberCount; $i++) { 
+                    if($request->anggota_nim[$i] == Auth::user()->nim) {
+                        return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
+                    }
+    
+                    if($i != $memberCount-1 ){
+                        if($request->anggota_nim[$i] == $request->anggota_nim[$i+1]) {
+                            return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
+                        }
+                    }
+                    
+                }
             }
+
+
+            // create Team
+            $team = new Team;
+            $team->name = $request->name;
+            $team->cabang_lomba = $request->cabang_lomba;
+            $team->save();
             
-            if($request->anggota_nim[1] == Auth::user()->nim) {
-                return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
-            }
-        }
-        
-
-        $team = new Team;
-        $team->name = $request->name;
-        $team->cabang_lomba = $request->cabang_lomba;
-        $team->save();
-        
-        // Ketua tim id
-        $memberId = Member::where('user_id','=',Auth::user()->id)->first();
-        if($memberId == null){
-            $member = new Member;
-            $member->name = Auth::user()->name;
-            $member->nim = Auth::user()->nim;
-            $member->phone = Auth::user()->phone;
-            $member->email = Auth::user()->email;
-            $member->university_id = Auth::user()->university_id;
-            $member->prodi = Auth::user()->prodi;
-            $member->ktm = Auth::user()->ktm;
-            $member->user_id = Auth::user()->id;
-            $member->save();
-            
-            $memberId = $member->id;
-        }
-        
-        $role = "Ketua";
-        // memasukkan ketua ke rel member_team
-        $team->members()->attach($memberId,[ 'role' => $role]);
-
-        // looping memasukkan anggota 
-        for ($i=0; $i < $memberCount; $i++) { 
-            $memberId = Member::where('nim','=',$request->anggota_nim[$i])->first();
+            // Ketua tim id
+            $memberId = Member::where('user_id','=',Auth::user()->id)->first();
             if($memberId == null){
                 $member = new Member;
-                $member->name = $request->anggota_name[$i];
-                $member->nim = $request->anggota_nim[$i];
-                $member->phone = $request->anggota_phone[$i];
-                $member->email = $request->anggota_email[$i];
-                $member->university_id = $request->anggota_university_id[$i];
-                $member->prodi = $request->anggota_prodi[$i];
-
-                // save ktm into cloud
-                if($request->file('anggota_ktm')[$i]) {
-                    $newFilename = $request->anggota_university_id[$i].'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[$i]->getClientOriginalExtension();
-                    $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[$i]);
-                    $member->ktm = $newFilename;
-                }
+                $member->name = Auth::user()->name;
+                $member->nim = Auth::user()->nim;
+                $member->phone = Auth::user()->phone;
+                $member->email = Auth::user()->email;
+                $member->university_id = Auth::user()->university_id;
+                $member->prodi = Auth::user()->prodi;
+                $member->ktm = Auth::user()->ktm;
+                $member->user_id = Auth::user()->id;
                 $member->save();
-
+                
                 $memberId = $member->id;
             }
+            
+            $role = "Ketua";
+            // memasukkan ketua ke rel member_team
+            $team->members()->attach($memberId,[ 'role' => $role]);
+
+            // looping memasukkan anggota 
+            for ($i=0; $i < $memberCount; $i++) { 
+                $memberId = Member::where('nim','=',$request->anggota_nim[$i])->first();
+                if($memberId == null){
+                    $member = new Member;
+                    $member->name = $request->anggota_name[$i];
+                    $member->nim = $request->anggota_nim[$i];
+                    $member->phone = $request->anggota_phone[$i];
+                    $member->email = $request->anggota_email[$i];
+                    $member->university_id = $request->anggota_university_id[$i];
+                    $member->prodi = $request->anggota_prodi[$i];
+
+                    // save ktm into cloud
+                    if($request->file('anggota_ktm')[$i]) {
+                        $newFilename = $request->anggota_university_id[$i].'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[$i]->getClientOriginalExtension();
+                        $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[$i]);
+                        $member->ktm = $newFilename;
+                    }
+                    $member->save();
+
+                    $memberId = $member->id;
+                }
 
 
-            $role = 'Anggota';
+                $role = 'Anggota';
+                $team->members()->attach($memberId,[ 'role' => $role]);
+            }
+        }else{
+            // validate file upload
+            $validateData = $request->validate([
+                'anggota_excel' => 'required|mimes:xlsx|max:8192',
+                'anggota_ktm' => 'required|mimes:zip|max:22768'
+            ]);
+                
+            // create Team
+            $team = new Team;
+            $team->name = $request->name;
+            $team->cabang_lomba = $request->cabang_lomba;
+            $team->member_count = $memberCount;
+            $team->save();
+
+            // save ktm into cloud
+            if($request->file('anggota_excel')) {
+                $newFilename = 'excel_'.Auth::user()->university_id.'_'.$team->id.'_'.str_replace(" ","",$team->name).'.'.$request->file('anggota_excel')->getClientOriginalExtension();
+                $this->saveIntoCloud('DATA_ANGGOTA',$newFilename,$request->file('anggota_excel'));
+                $team->excel_member = $newFilename;
+            }
+
+            // save ktm into cloud
+            if($request->file('anggota_ktm')) {
+                $newFilename = Auth::user()->university_id.'_'.$team->id.'_'.str_replace(" ","",$team->name).'.'.$request->file('anggota_ktm')->getClientOriginalExtension();
+                $this->saveIntoCloud('KTM_ZIP',$newFilename,$request->file('anggota_ktm'));
+                $team->archive_member = $newFilename;
+            }
+
+            
+            $team->save();
+            
+            // Ketua tim id
+            $memberId = Member::where('user_id','=',Auth::user()->id)->first();
+            if($memberId == null){
+                $member = new Member;
+                $member->name = Auth::user()->name;
+                $member->nim = Auth::user()->nim;
+                $member->phone = Auth::user()->phone;
+                $member->email = Auth::user()->email;
+                $member->university_id = Auth::user()->university_id;
+                $member->prodi = Auth::user()->prodi;
+                $member->ktm = Auth::user()->ktm;
+                $member->user_id = Auth::user()->id;
+                $member->save();
+                
+                $memberId = $member->id;
+            }
+            
+            $role = "Ketua";
+
+            // memasukkan ketua ke rel member_team
             $team->members()->attach($memberId,[ 'role' => $role]);
         }
 
-        // if($request->anggota1) {
-        //     $userTeam = 0;
-        //     foreach($teams as $tim) {
-        //         foreach($tim->users as $user) {
-        //             if($request->anggota1 == $user->id && $user->pivot->status == "Disetujui") {
-        //                 $userTeam += 1;
-        //             }
-        //         }
-        //     }
-        //     if($userTeam >= 3) {
-        //         $teamsCreated = $teams->where('name',$request->name);
-        //         foreach($teamsCreated as $tim) {
-        //             $team->users()->detach(Auth::user()->id, ['role' => $role, 'status' => $status]);
-        //             $tim->delete();
-        //         }
-        //     }
-        //     $team->users()->attach($request->anggota1);
-        // }
-
-        // if($request->anggota2) {
-        //     $userTeam = 0;
-        //     foreach($teams as $tim) {
-        //         foreach($tim->users as $user) {
-        //             if($request->anggota2 == $user->id && $user->pivot->status == "Disetujui") {
-        //                 $userTeam += 1;
-        //             }
-        //         }
-        //     }
-        //     if($userTeam >= 3) {
-        //         $teamsCreated = $teams->where('name',$request->name);
-        //         foreach($teamsCreated as $tim) {
-        //             $team->users()->detach(Auth::user()->id, ['role' => $role, 'status' => $status]);
-        //             $tim->delete();
-        //         }
-        //         return redirect()->back()->with('error','Anggota 2 sudah berada di 3 tim!');
-        //     }
-        //     $team->users()->attach($request->anggota2);
-        // }
         
-        // // send email
-        // $emailTeam = [];
-        // foreach($team->users as $user) {
-        //     if($user->id != Auth::user()->id) {
-        //         $emailTeam[] = $user->email;
-        //     }
-        // }
-
-        // foreach($emailTeam as $emailUser) {
-        //     Mail::to($emailUser)->send(new SendEmailInvitation($team));
-        // }
 
         return redirect()->route('teams.show', ['team' => $team->id])->with('message', 'Tim berhasil dibuat');
     }
@@ -242,23 +272,26 @@ class TeamsController extends Controller
             return redirect(url('/teams'))->with('error','Tim Tidak Ditemukan');
         }
         
-
+        
         if(Auth::user()->role == "Admin") {
             $team = Team::findOrFail($teamId);
             return view('teams.detail', ['team' => $team]);
         }
-
+        
         foreach($members as $member) {
             foreach($member->teams as $team) {
                 if($team->id == $teamId && $team->pivot->member_id == $memberLogin->id) {
                     $team = Team::findOrFail($teamId);
-                    $cabanglomba = CabangLomba::find($team->cabang_lomba)->first();
+                    $cabanglomba = CabangLomba::where('id','=',$team->cabang_lomba)->first();
+                    $subs = Submission::where('team_id',"=",$teamId)->first();
+                    
                     return view(
                         'teams.detail', 
                         [
                             'team' => $team ,
                             'cabanglomba' => $cabanglomba,
-                            'pt' => $pt
+                            'pt' => $pt,
+                            'subs' => $subs
                         ]
                     );
                 }
@@ -272,7 +305,7 @@ class TeamsController extends Controller
     {
         $team = Team::findOrFail($teamId);
         $pt = PerguruanTinggi::find(Auth::user()->university_id);
-        $cabangLomba = CabangLomba::find($team->cabang_lomba)->first();
+        $cabangLomba = CabangLomba::where('id','=',$team->cabang_lomba)->first();
         if(!$pt){
             $pt = '';
         }
@@ -287,6 +320,10 @@ class TeamsController extends Controller
         $members = [];
         foreach($team->members as $member) {
             array_push($members,$member);
+        }
+
+        if($team->member_count != null){
+            $memberCount = $team->member_count;
         }
 
         // dd($members);
@@ -319,121 +356,138 @@ class TeamsController extends Controller
 
     public function update(Request $request, $teamId)
     {
-        $validateData = $request->validate([
-            'name' => 'required|max:50',
-            'cabang_lomba' => 'required',
-            'anggota_name.*' => 'required',
-            'anggota_email.*' => 'required|email',
-            'anggota_university_id.*' => 'required',
-            'anggota_prodi.*' => 'required',
-            'anggota_ktm.*' => 'required'
-        ]);
-        
-        $team = Team::findOrFail($teamId);
-        
-        // jumlah anggota
+        if($request->anggota_id){
+            $oldmembercount = count($request->anggota_id);
+        }
         $memberCount = $request->jumlah_anggota;
-        if($memberCount == 1){
-            if($request->anggota_nim[0] == Auth::user()->nim) {
-                return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
+        $team = Team::findOrFail($teamId);
+        $members = Member::all();
+        $cabangLomba = CabangLomba::where('id','=',$request->cabang_lomba)->first();
+        $maxAnggota = $cabangLomba->anggota - 1;
+        $univId = Auth::user()->university_id;
+        $request->anggota_ganti_ktm = explode (",", $request->anggota_ganti_ktm); 
+
+        if($memberCount <= 6){
+            $validateData = $request->validate([
+                'name' => 'required|max:50',
+                'cabang_lomba' => 'required',
+                'anggota_name.*' => 'required',
+                'anggota_nim.*' => 'required',
+                'anggota_email.*' => 'required|email',
+                'anggota_university_id.*' => 'required',
+                'anggota_prodi.*' => 'required',
+                'anggota_ktm.*' => 'required'
+            ]);
+
+            if($memberCount!=0){
+                foreach ($members as $member) {
+                    foreach ($request->anggota_nim as $key => $anggotanim) {
+                        if($member->nim == $anggotanim){
+                            if($member->university_id != $univId){
+                                return redirect()->back()->with('error', 'Nim telah terdaftar !');
+                            }
+                        }
+                    }
+                }
+
+                // check if same 
+                for ($i=0; $i < $memberCount; $i++) { 
+                    if($request->anggota_nim[$i] == Auth::user()->nim) {
+                        return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
+                    }
+    
+                    if($i != $memberCount-1 ){
+                        if($request->anggota_nim[$i] == $request->anggota_nim[$i+1]) {
+                            return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
+                        }
+                    }
+                    
+                }
             }
+
+            $team->name = $request->name;
+            $team->cabang_lomba = $request->cabang_lomba;
+            $team->save();
+
+            $ktm_index = 0;
+            for ($i=0; $i < $memberCount; $i++) { 
+                if($i < $oldmembercount){
+                    $member = Member::where('id','=',$request->anggota_id[$i])->first();
+                    $member->name = $request->anggota_name[$i];
+                    $member->nim = $request->anggota_nim[$i];
+                    $member->phone = $request->anggota_phone[$i];
+                    $member->email = $request->anggota_email[$i];
+                    $member->university_id = $univId;
+                    $member->prodi = $request->anggota_prodi[$i];
+
+                    if($request->anggota_ganti_ktm[$i] == 1){
+                        if($request->file('anggota_ktm')[$ktm_index]) {
+                            $newFilename = $univId.'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[$ktm_index]->getClientOriginalExtension();
+                            $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[$ktm_index]);
+                            $member->ktm = $newFilename;
+                            $ktm_index++;
+                        }
+                    }
+    
+                    $member->save();
+                }else{
+                    $member = new Member;
+                    $member->name = $request->anggota_name[$i];
+                    $member->nim = $request->anggota_nim[$i];
+                    $member->phone = $request->anggota_phone[$i];
+                    $member->email = $request->anggota_email[$i];
+                    $member->university_id = $univId;
+                    $member->prodi = $request->anggota_prodi[$i];
+
+                    if($request->anggota_ganti_ktm[$i] == 1){
+                        if($request->file('anggota_ktm')[$ktm_index]) {
+                            $newFilename = $univId.'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[$ktm_index]->getClientOriginalExtension();
+                            $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[$ktm_index]);
+                            $member->ktm = $newFilename;
+                            $ktm_index++;
+                        }
+                    }
+    
+                    $member->save();
+                    
+                    $memberId = $member->id;
+
+                    $role = 'Anggota';
+                    $team->members()->attach($memberId,[ 'role' => $role]);
+                }
+                
+            }
+        }else{
+            // validate file upload
+            $validateData = $request->validate([
+                'anggota_excel' => 'required|mimes:xlsx|max:8192',
+                'anggota_ktm' => 'required|mimes:zip|max:22768'
+            ]);
+                
+            // get Team
+            $team->name = $request->name;
+            $team->cabang_lomba = $request->cabang_lomba;
+
+            // save ktm into cloud
+            if($request->file('anggota_excel')) {
+                $newFilename = 'excel_'.Auth::user()->university_id.'_'.$teamId.'_'.str_replace(" ","",$team->name).'.'.$request->file('anggota_excel')->getClientOriginalExtension();
+                $this->saveIntoCloud('DATA_ANGGOTA',$newFilename,$request->file('anggota_excel'));
+                $team->excel_member = $newFilename;
+            }
+
+            // save ktm into cloud
+            if($request->file('anggota_ktm')) {
+                $newFilename = Auth::user()->university_id.'_'.$teamId.'_'.str_replace(" ","",$team->name).'.'.$request->file('anggota_ktm')->getClientOriginalExtension();
+                $this->saveIntoCloud('KTM_ZIP',$newFilename,$request->file('anggota_ktm'));
+                $team->archive_member = $newFilename;
+            }
+
+            $team->save();
         }
 
-        if ($memberCount > 1) {
-            if($request->anggota_nim[0] == $request->anggota_nim[1]) {
-                return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
-            }
-            
-            if($request->anggota_nim[1] == Auth::user()->nim) {
-                return redirect()->back()->with('error', 'Ketua atau Anggota tidak boleh sama!');
-            }
-        }
-
-        $team->name = $request->name;
-        $team->cabang_lomba = $request->cabang_lomba;
-        $team->save();
-
-        for ($i=0; $i < $memberCount; $i++) { 
-            $member = Member::where('id','=',$request->anggota_id[$i])->first();
-            $jumlahFile = count($request->file());
-            
-            if($member == null){
-                $member = new Member;
-                $member->name = $request->anggota_name[$i];
-                $member->nim = $request->anggota_nim[$i];
-                $member->phone = $request->anggota_phone[$i];
-                $member->email = $request->anggota_email[$i];
-                $member->university_id = $request->anggota_university_id[$i];
-                $member->prodi = $request->anggota_prodi[$i];
         
-                if($jumlahFile == 1){
-                    if($request->anggota_ganti_ktm == 1 && $i == 0){
-                        // save ktm into cloud
-                        if($request->file('anggota_ktm')[0]) {
-                            $newFilename = $request->anggota_university_id[$i].'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[0]->getClientOriginalExtension();
-                            $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[0]);
-                            $member->ktm = $newFilename;
-                        }
-                    }
-                    if($request->anggota_ganti_ktm == 2 && $i == 1){
-                        // save ktm into cloud
-                        if($request->file('anggota_ktm')[0]) {
-                            $newFilename = $request->anggota_university_id[$i].'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[0]->getClientOriginalExtension();
-                            $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[0]);
-                            $member->ktm = $newFilename;
-                        }
-                    }
-                }else{
-                    // save ktm into cloud
-                    if($request->file('anggota_ktm')[$i]) {
-                        $newFilename = $request->anggota_university_id[$i].'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[$i]->getClientOriginalExtension();
-                        $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[$i]);
-                        $member->ktm = $newFilename;
-                    }
-                }
 
-                $member->save();
-
-                $memberId = $member->id;
-                $role = 'Anggota';
-                $team->members()->attach($memberId,[ 'role' => $role]);
-            }else{
-                $member->name = $request->anggota_name[$i];
-                $member->nim = $request->anggota_nim[$i];
-                $member->phone = $request->anggota_phone[$i];
-                $member->email = $request->anggota_email[$i];
-                $member->university_id = $request->anggota_university_id[$i];
-                $member->prodi = $request->anggota_prodi[$i];
-
-                if($jumlahFile == 1){
-                    if($request->anggota_ganti_ktm == 1 && $i == 0){
-                        // save ktm into cloud
-                        if($request->file('anggota_ktm')[0]) {
-                            $newFilename = $request->anggota_university_id[$i].'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[0]->getClientOriginalExtension();
-                            $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[0]);
-                            $member->ktm = $newFilename;
-                        }
-                    }
-                    if($request->anggota_ganti_ktm == 2 && $i == 1){
-                        // save ktm into cloud
-                        if($request->file('anggota_ktm')[0]) {
-                            $newFilename = $request->anggota_university_id[$i].'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[0]->getClientOriginalExtension();
-                            $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[0]);
-                            $member->ktm = $newFilename;
-                        }
-                    }
-                }else{
-                    // save ktm into cloud
-                    if($request->file('anggota_ktm')[$i]) {
-                        $newFilename = $request->anggota_university_id[$i].'_'.$request->anggota_nim[$i].'.'.$request->file('anggota_ktm')[$i]->getClientOriginalExtension();
-                        $this->saveIntoCloud('KTM',$newFilename,$request->file('anggota_ktm')[$i]);
-                        $member->ktm = $newFilename;
-                    }
-                }
-
-                $member->save();
-            }
-        }
+        
 
         return redirect()->route('teams.show', ['team' => $teamId])->with('message', 'Tim berhasil di edit');
 
@@ -442,6 +496,8 @@ class TeamsController extends Controller
     public function destroy($teamId)
     {
         $team = Team::findOrFail($teamId);
+
+    //    return ($team->members);
         foreach($team->members as $member) {
             if($member->pivot->role == 'Ketua'){
                 $memberKetua = $member->pivot->member_id;
@@ -449,7 +505,7 @@ class TeamsController extends Controller
         }
 
         // mengambil user id dari ketua
-        $memberKetua = Member::find($memberKetua)->first();        
+        $memberKetua = Member::where('id','=',$memberKetua)->first();        
         
         // Cek apabila ketua atau admin yang menghapus
         if((Auth::user()->id == $memberKetua->user_id) || (Auth::user()->role == "Admin")) {
@@ -475,7 +531,6 @@ class TeamsController extends Controller
             // hapus tim
             $team->delete();
             
-            
             return response()->json(
                 [
                     'status' => '200',
@@ -485,8 +540,6 @@ class TeamsController extends Controller
         }
 
         return redirect()->back()->with('error', 'Anda tidak punya akses!');
-
-        
     }
 
     public function removeMember($teamId,$memberId){
@@ -502,7 +555,7 @@ class TeamsController extends Controller
         }
         
         // mengambil user id dari ketua
-        $memberKetua = Member::find($memberKetua)->first();
+        $memberKetua = Member::where('id','=',$memberKetua)->first();        
         
         // Cek apabila ketua atau admin yang menghapus
         if((Auth::user()->id == $memberKetua->user_id) || (Auth::user()->role == "Admin")) {
@@ -534,7 +587,7 @@ class TeamsController extends Controller
             return 'Directory does not exist!';
         }
 
-        if (!$file){
+        if ($file == null){
             $upfile->storeAs($dir["path"],$filename,'google');
         }else {
             Storage::cloud()->delete($file['path']);
