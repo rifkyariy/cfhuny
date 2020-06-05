@@ -102,7 +102,7 @@
               <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="media align-items-center">
                   <span class="avatar avatar-sm rounded-circle">
-                    <img alt="Image placeholder" src="{{ Auth::user()->avatar }}">
+                    <img alt="Image placeholder" src="{{ Auth::user()->avatar?Auth::user()->avatar:asset('img/brand/avatar.png') }}" class="">
                   </span>
                   <div class="media-body  ml-2  d-none d-lg-block">
                     <span class="mb-0 text-sm  font-weight-bold">{{ Auth::user()->name }}</span>
@@ -168,7 +168,7 @@
             <div class="row justify-content-center">
               <div class="col-lg-3 order-lg-2">
                 <div class="card-profile-image">
-                    <img src="{{ Auth::user()->avatar }}" class="rounded-circle">
+                    <img alt="Image placeholder" src="{{ Auth::user()->avatar?Auth::user()->avatar:asset('img/brand/avatar.png') }}" class="rounded-circle">
                 </div>
               </div>
             </div>

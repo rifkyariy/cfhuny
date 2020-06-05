@@ -1065,24 +1065,44 @@ var noUiSlider = (function() {
 
 'use strict';
 
-var Scrollbar = (function() {
 
-	// Variables
+function pinSidenav() {
+    $('.sidenav-toggler').addClass('active');
+    $('.sidenav-toggler').data('action', 'sidenav-unpin');
+    $('body').removeClass('g-sidenav-hidden').addClass('g-sidenav-show g-sidenav-pinned');
+    $('body').append('<div class="backdrop d-xl-none" data-action="sidenav-unpin" data-target='+$('#sidenav-main').data('target')+' />');
 
-	var $scrollbar = $('.scrollbar-inner');
+    // Store the sidenav state in a cookie session
+    Cookies.set('sidenav-state', 'pinned');
+}
+
+function unpinSidenav() {
+    $('.sidenav-toggler').removeClass('active');
+    $('.sidenav-toggler').data('action', 'sidenav-pin');
+    $('body').removeClass('g-sidenav-pinned ').addClass('g-sidenav-hidden');
+    $('body').find('.backdrop').remove();
+
+    // Store the sidenav state in a cookie session
+    Cookies.set('sidenav-state', 'unpinned');
+}
 
 
-	// Methods
+$( document ).ready(() => {
+    unpinSidenav();
+})
 
-	function init() {
-		$scrollbar.scrollbar().scrollLock()
-	}
+$( window ).scroll(function() {
+    console.log('scroll');
+    $('.sidenav-toggler').removeClass('active');
+    $('.sidenav-toggler').data('action', 'sidenav-pin');
+    $('body').removeClass('g-sidenav-pinned nav-open ').addClass('g-sidenav-hidden');
+    $('body').find('.backdrop').remove();
+});
 
-
-	// Events
-
-	if ($scrollbar.length) {
-		init();
-	}
-
-})();
+$(document.body).click( function(e) {
+    unpinSidenav();
+});
+    
+$(".sidenav-main").click( function(e) {
+    e.stopPropagation(); // this stops the event from bubbling up to the body
+});

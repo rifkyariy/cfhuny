@@ -98,8 +98,8 @@
                                 <li class="nav-item"><a class="page-scroll" href="#kategorilomba">Kategori Lomba</a>
                                 </li>
                                 <li class="nav-item"><a class="page-scroll" href="#berita">Berita</a></li>
-                                <li class="nav-item"><a class="page-scroll" href="#kodePT">Kode PT</a>
                                 <li class="nav-item"><a class="page-scroll" href="#faq">FAQ</a></li>
+                                <li class="nav-item"><a class="page-scroll" href="#kodePT">Kode PT</a></li>
                                 
                                 @if(Auth::user())
                                     @if(Auth::user()->role == "Mahasiswa")
@@ -340,7 +340,7 @@
                                 <i class="lni lni-instagram"></i>
                             </div>
                             <div class="contact-info-content media-body mt-2">
-                                <p class="text"><a href="#">@uny_official</a></p>
+                                <p class="text"><a href="https://www.instagram.com/kemahasiswaan.uny/">@kemahasiswaan.uny</a></p>
                             </div>
                         </div> <!-- single contact info -->
                     </div>
@@ -362,7 +362,7 @@
                                 <i class="lni lni-envelope"></i>
                             </div>
                             <div class="contact-info-content media-body  mt-2">
-                                <p class="text"><a href="mailto:cartesion@uny.ac.id">cartesion@uny.ac.id</a></p>
+                                <p class="text"><a href="mailto:kemahasiswaan@uny.ac.id">kemahasiswaan@uny.ac.id</a></p>
                             </div>
                         </div> <!-- single contact info -->
                     </div>
@@ -438,7 +438,7 @@
                                         alt="website"></i></a></li>
                     </ul> <!-- social -->
                     <div class="footer-support text-center">
-                        <span class="mail">cartesion@uny.ac.id</span>
+                        <span class="mail">kemahasiswaan@uny.ac.id</span>
                         <span class="mail">                
                             &copy; 2020 <a href="https://infiniteuny.id" class="font-weight-bold ml-1" target="_blank">Infinite UNY</a>
                         </span>

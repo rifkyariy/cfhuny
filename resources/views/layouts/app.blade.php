@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Distancing Festival</title>
+  <title>UNY National Cartesion</title>
   <!-- Favicon -->
   <link rel="icon" href="{{ asset('img/brand/favicon.ico') }}" type="image/png">
   <!-- Fonts -->
@@ -29,7 +29,10 @@
 
   <!-- Argon Scripts -->
   <!-- Core -->
-  <script src="{{asset('vendor/jquery/dist/jquery.min.js')}}"></script>
+  <!--<script src="{{asset('vendor/jquery/dist/jquery.min.js')}}"></script>-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.min.js"></script>
+  
   <script src="{{asset('vendor/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
   <script src="{{asset('vendor/js-cookie/js.cookie.js')}}"></script>
   <script src="{{asset('vendor/jquery.scrollbar/jquery.scrollbar.min.js')}}"></script>

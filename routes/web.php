@@ -1,13 +1,13 @@
 <?php
 
 Route::get('/', function(){
-    $berita = \DB::table('berita')
+    $berita = \DB::table('news')
                 ->get();
     return view('index',['berita' => $berita]);
 })->name('landingpage');
 
 Route::get('/detailBerita/{id}', function($id){
-    $detailBerita = \DB::table('berita')
+    $detailBerita = \DB::table('news')
                 ->where('id',$id)
                 ->get();
     return view('detailBerita',['detail' => $detailBerita]);
@@ -55,6 +55,6 @@ Route::get('auth/{provider}', 'Auth\AuthController@redirectToProvider');
 Route::get('auth/{provider}/callback', 'Auth\AuthController@handleProviderCallback');
 
 Route::get('/clear-cache', function() {
-    Artisan::call('cache:clear');
-    return "Cache is cleared";
+    $exitCode = Artisan::call('config:cache');
+    return 'DONE'; //Return anything
 });
